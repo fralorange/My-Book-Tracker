@@ -17,7 +17,7 @@ namespace MyELib.Clients.Console.Modules
             System.Console.Write("Введите название: ");
             var name = System.Console.ReadLine() ?? "Безымянная библиотека";
             System.Console.WriteLine("Добавьте документы: ---ПРОПУСКАЕТСЯ---");
-            return new CreateLibraryDto { Name = name, Documents = [] };
+            return new CreateLibraryDto { Name = name, DocumentIds = [] };
         }
 
         public static UpdateLibraryDto InputUpdateLibrary()
@@ -36,7 +36,7 @@ namespace MyELib.Clients.Console.Modules
                     case "2":
                         break;
                     case "3":
-                        return new UpdateLibraryDto { Name = name, Documents = [] };
+                        return new UpdateLibraryDto { Name = name, DocumentIds = [] };
                     default:
                         break;
                 }

@@ -4,7 +4,7 @@ using MyELib.Infrastructure.DataAccess.Contexts.Library.Repositories;
 using System.Linq.Expressions;
 using LibraryEntity = MyELib.Domain.Library.Library;
 
-namespace MyELib.Infrastructure.Tests.Contexts.Library
+namespace MyELib.Infrastructure.Tests.Contexts.Library.Repositories
 {
     public class LibraryRepositoryTests
     {

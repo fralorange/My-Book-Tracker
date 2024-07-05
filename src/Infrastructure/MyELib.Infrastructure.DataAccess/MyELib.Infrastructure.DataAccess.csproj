@@ -8,10 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Contexts\Document\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\Application\MyELib.Application.AppData\MyELib.Application.AppData.csproj" />
   </ItemGroup>
 

@@ -16,6 +16,6 @@ namespace MyELib.Contracts.Library
         /// <summary>
         /// Документы.
         /// </summary>
-        public IReadOnlyCollection<Document.DocumentDto>? Documents { get; set; }
+        public IReadOnlyCollection<Guid>? DocumentIds { get; set; }
     }
 }

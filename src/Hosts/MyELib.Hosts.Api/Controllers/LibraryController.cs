@@ -23,7 +23,7 @@ namespace MyELib.Hosts.Api.Controllers
         }
 
         /// <summary>
-        /// GET-метод контроллера библиотек для получения коллекции.
+        /// Получить все библиотеки.
         /// </summary>
         /// <param name="token">Токен отмены операции.</param>
         /// <returns></returns>
@@ -36,7 +36,7 @@ namespace MyELib.Hosts.Api.Controllers
         }
 
         /// <summary>
-        /// GET-метод контроллера библиотек для получения модели по идентификатору.
+        /// Получить библиотеку по уникальному идентификатору.
         /// </summary>
         /// <param name="id">Уникальный идентификатор.</param>
         /// <param name="token">Токен отмены операции.</param>
@@ -51,7 +51,7 @@ namespace MyELib.Hosts.Api.Controllers
         }
 
         /// <summary>
-        /// POST-метод контроллера библиотек для добавления новых библиотек.
+        /// Добавить новую библиотеку.
         /// </summary>
         /// <param name="model">Добавляемая модель.</param>
         /// <param name="token">Токен отмены операции.</param>
@@ -65,7 +65,7 @@ namespace MyELib.Hosts.Api.Controllers
         }
 
         /// <summary>
-        /// PUT-метод контроллера библиотек для редактирования библиотек.
+        /// Обновить существующую библиотеку.
         /// </summary>
         /// <param name="id">Уникальный идентификатор.</param>
         /// <param name="model">Отредактированная модель.</param>
@@ -84,7 +84,7 @@ namespace MyELib.Hosts.Api.Controllers
         }
 
         /// <summary>
-        /// DELETE-метод контроллера библиотек для удаления библиотек.
+        /// Удалить существующую библиотеку.
         /// </summary>
         /// <param name="id">Уникальный идентификатор.</param>
         /// <param name="token">Токен отмены операции.</param>

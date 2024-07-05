@@ -10,15 +10,15 @@ namespace MyELib.Domain.Document
         /// <summary>
         /// Название документа.
         /// </summary>
-        public required string Name { get; set; }
+        public string Name { get; set; }
         /// <summary>
         /// Тип загруженного документа.
         /// </summary>
-        public required string FileType { get; set; }
+        public string FileType { get; set; }
         /// <summary>
         /// Содержимое документа.
         /// </summary>
-        public required byte[] Content { get; set; }
+        public byte[] Content { get; set; }
         /// <summary>
         /// Размер документа.
         /// </summary>
@@ -30,10 +30,14 @@ namespace MyELib.Domain.Document
         /// <summary>
         /// Автор загрузки документа.
         /// </summary>
-        public required string UploadedBy { get; set; }
+        public string UploadedBy { get; set; }
         /// <summary>
         /// Навигационное поле на объект библиотеки <see cref="Library.Library"/>.
         /// </summary>
-        public required Library.Library Library { get; set; }
+        public Library.Library? Library { get; set; }
+        /// <summary>
+        /// Идентификатор привязанной библиотеки.
+        /// </summary>
+        public Guid? LibraryId { get; set; }
     }
 }
