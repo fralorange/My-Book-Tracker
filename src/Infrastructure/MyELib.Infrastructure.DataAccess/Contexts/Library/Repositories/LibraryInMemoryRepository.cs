@@ -23,9 +23,14 @@ namespace MyELib.Infrastructure.DataAccess.Contexts.Library.Repositories
         {
             return Task.Run(() => _libraries.FirstOrDefault(l => l.Id == id), token);
         }
-        public Task CreateAsync(LibraryEntity entity, CancellationToken token)
+        public Task<Guid> CreateAsync(LibraryEntity entity, CancellationToken token)
         {
-            return Task.Run(() => _libraries.Add(entity), token);
+            entity.Id = Guid.NewGuid();
+            return Task.Run(() =>
+            {
+                _libraries.Add(entity);
+                return entity.Id;
+            }, token);
         }
 
         public Task UpdateAsync(LibraryEntity entity, CancellationToken token)
@@ -40,7 +45,7 @@ namespace MyELib.Infrastructure.DataAccess.Contexts.Library.Repositories
 
         public Task DeleteAsync(LibraryEntity entity, CancellationToken token)
         {
-            return Task.Run(() => _libraries.Remove(entity));
+            return Task.Run(() => _libraries.RemoveAll(lib => lib.Id == entity.Id));
         }
     }
 }

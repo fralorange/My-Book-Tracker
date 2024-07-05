@@ -38,12 +38,12 @@ namespace MyELib.Application.AppData
             return _libraryMapper.MapToDto(entity);
         }
 
-        public async Task CreateAsync(CreateLibraryDto dto, CancellationToken token)
+        public async Task<Guid> CreateAsync(CreateLibraryDto dto, CancellationToken token)
         {
             if (dto is null)
-                return;
+                return Guid.Empty;
             var entity = _libraryMapper.MapToLibrary(dto);
-            await _libraryRepository.CreateAsync(entity, token);
+            return await _libraryRepository.CreateAsync(entity, token);
         }
         public async Task UpdateAsync(UpdateLibraryDto dto, Guid id, CancellationToken token)
         {

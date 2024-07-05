@@ -33,7 +33,7 @@ namespace MyELib.Application.AppData
         /// </summary>
         /// <param name="entity">Создаваемая сущность</param>
         /// <param name="token">Токен отмены операции.</param>
-        Task CreateAsync(LibraryEntity entity, CancellationToken token);
+        Task<Guid> CreateAsync(LibraryEntity entity, CancellationToken token);
         /// <summary>
         /// Редактирует сущность библиотеки.
         /// </summary>
