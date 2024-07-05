@@ -33,7 +33,7 @@ namespace MyELib.Application.AppData.Contexts.Library.Services
         /// </summary>
         /// <param name="dto">Создаваемая библиотека.</param>
         /// <param name="token">Токен отмены операции.</param>
-        Task CreateAsync(CreateLibraryDto dto, CancellationToken token);
+        Task<Guid> CreateAsync(CreateLibraryDto dto, CancellationToken token);
         /// <summary>
         /// Редактирует библиотеку.
         /// </summary>

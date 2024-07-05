@@ -117,7 +117,7 @@ namespace MyELib.Infrastructure.Tests.Contexts.Library
             await libraryRepository.CreateAsync(library1, CancellationToken.None);
 
             // Act
-            await libraryRepository.DeleteAsync(library1, CancellationToken.None);
+            await libraryRepository.DeleteAsync(new LibraryEntity { Id = library1.Id, Name = library1.Name, Documents = library1.Documents }, CancellationToken.None);
 
             // Assert
             Assert.DoesNotContain(library1, await libraryRepository.GetAllAsync(CancellationToken.None));
