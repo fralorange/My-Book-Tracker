@@ -1,4 +1,5 @@
 ﻿using MyELib.Contracts.Document;
+using System.Linq.Expressions;
 using DocumentEntity = MyELib.Domain.Document.Document;
 
 namespace MyELib.Infrastructure.ComponentRegistrar.Mappers.Document
@@ -20,5 +21,17 @@ namespace MyELib.Infrastructure.ComponentRegistrar.Mappers.Document
         /// <param name="dto">ДТО.</param>
         /// <returns><see cref="DocumentEntity"/></returns>
         DocumentEntity MapToDocument(DocumentDto dto);
+        /// <summary>
+        /// Преобразование (оборачивание) предикаты ДТО в предикату сущности.
+        /// </summary>
+        /// <param name="expression">Предиката.</param>
+        Expression<Func<DocumentEntity, bool>> MapToExpression(Expression<Func<DocumentDto, bool>> expression);
+        /// <summary>
+        /// Преобразование ДТО и метаданных в сущность.
+        /// </summary>
+        /// <param name="dto">ДТО.</param>
+        /// <param name="metadata">Метаданные.</param>
+        /// <returns><see cref="DocumentEntity"/></returns>
+        DocumentEntity MapToDocument(CreateDocumentDto dto, CreateDocumentDtoMetadata metadata);
     }
 }

@@ -1,8 +1,10 @@
 namespace MyELib.Hosts.Api
 {
+#pragma warning disable CS1591
     public class Program
     {
         public static void Main(string[] args)
+#pragma warning restore CS1591 
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,7 @@ namespace MyELib.Hosts.Api
             builder.Services.AddServices();
             builder.Services.AddRepositories();
             builder.Services.AddMappers();
+            builder.Services.AddValidators();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(opt =>

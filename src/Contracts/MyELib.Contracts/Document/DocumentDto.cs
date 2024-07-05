@@ -35,6 +35,6 @@ namespace MyELib.Contracts.Document
         /// <summary>
         /// Навигационное поле на объект библиотеки <see cref="LibraryDto"/>.
         /// </summary>
-        public required LibraryDto Library { get; set; }
+        public LibraryDto? Library { get; set; }
     }
 }

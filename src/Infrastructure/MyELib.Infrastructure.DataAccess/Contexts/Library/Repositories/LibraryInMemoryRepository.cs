@@ -35,11 +35,10 @@ namespace MyELib.Infrastructure.DataAccess.Contexts.Library.Repositories
 
         public Task UpdateAsync(LibraryEntity entity, CancellationToken token)
         {
-            return Task.Run(async () =>
+            return Task.Run(() =>
             {
-                var currentEntity = await GetByIdAsync(entity.Id, token);
-                currentEntity!.Name = entity.Name;
-                currentEntity!.Documents = entity.Documents;
+                var index = _libraries.FindIndex(lib => lib.Id == entity.Id);
+                _libraries[index] = entity;
             }, token);
         }
 

@@ -104,7 +104,7 @@ namespace MyELib.Application.Tests.Contexts.Library.Services
             // Arrange
             var libraryMapper = new LibraryMapper();
 
-            var createLibrary1 = new CreateLibraryDto { Name = "Библиотека 1", Documents = [] };
+            var createLibrary1 = new CreateLibraryDto { Name = "Библиотека 1", DocumentIds = [] };
 
             var repositoryMock = new Mock<ILibraryRepository>();
             repositoryMock.Setup(r => r.CreateAsync(It.IsAny<LibraryEntity>(), CancellationToken.None));
@@ -125,7 +125,7 @@ namespace MyELib.Application.Tests.Contexts.Library.Services
             var libraryMapper = new LibraryMapper();
 
             var library1 = new LibraryEntity { Id = Guid.NewGuid(), Name = "Библиотека 1", Documents = [] };
-            var updateLibrary1 = new UpdateLibraryDto { Name = "Обновленная библиотека 1", Documents = [] };
+            var updateLibrary1 = new UpdateLibraryDto { Name = "Обновленная библиотека 1", DocumentIds = [] };
 
             var repositoryMock = new Mock<ILibraryRepository>();
             repositoryMock.Setup(r => r.UpdateAsync(It.IsAny<LibraryEntity>(), CancellationToken.None));
