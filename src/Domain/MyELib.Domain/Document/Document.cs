@@ -34,7 +34,7 @@ namespace MyELib.Domain.Document
         /// <summary>
         /// Навигационное поле на объект библиотеки <see cref="Library.Library"/>.
         /// </summary>
-        public Library.Library? Library { get; set; }
+        public virtual Library.Library? Library { get; set; }
         /// <summary>
         /// Идентификатор привязанной библиотеки.
         /// </summary>

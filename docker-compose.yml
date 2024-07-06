@@ -27,7 +27,7 @@ services:
         restart: on-failure:5
 
   postgres:
-        container_name: postgres
+        container_name: my-e-lib-postgres
         image: postgres
         environment:
             POSTGRES_DB: Lib
@@ -35,6 +35,8 @@ services:
             POSTGRES_PASSWORD: password
         volumes:
           - pg-data:/var/lib/postgresql/data
+        ports:
+          - 5432:5432
         networks:
           - my-e-lib
 

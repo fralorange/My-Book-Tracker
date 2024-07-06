@@ -36,8 +36,8 @@ namespace MyELib.Hosts.Api
         public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-            services.AddSingleton<ILibraryRepository, LibraryRepository>();
-            services.AddSingleton<IDocumentRepository, DocumentRepository>();
+            services.AddScoped<ILibraryRepository, LibraryRepository>();
+            services.AddScoped<IDocumentRepository, DocumentRepository>();
 
             return services;
         }

@@ -20,7 +20,8 @@ namespace MyELib.Infrastructure.DataAccess.Contexts.Library.Configuration
 
             builder.HasMany(l => l.Documents)
                 .WithOne(d => d.Library)
-                .HasForeignKey(d => d.LibraryId);
+                .HasForeignKey(d => d.LibraryId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
