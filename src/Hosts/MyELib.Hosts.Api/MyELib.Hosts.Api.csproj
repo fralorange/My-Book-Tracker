@@ -20,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Application\MyELib.Application.AppData\MyELib.Application.AppData.csproj" />
     <ProjectReference Include="..\..\Infrastructure\MyELib.Infrastructure.DataAccess\MyELib.Infrastructure.DataAccess.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\MyELib.Infrastructure\MyELib.Infrastructure.csproj" />
   </ItemGroup>
 	
 </Project>

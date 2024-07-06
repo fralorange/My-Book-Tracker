@@ -41,7 +41,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastru
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyELib.Infrastructure.Tests", "tests\Infrastructure\MyELib.Infrastructure.Tests\MyELib.Infrastructure.Tests.csproj", "{D3C5DA99-5C66-4539-9FC0-FA56A5DB1593}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyELib.Hosts.Api", "src\Hosts\MyELib.Hosts.Api\MyELib.Hosts.Api.csproj", "{E64B0352-EEED-448B-A03E-1B067FE06212}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyELib.Hosts.Api", "src\Hosts\MyELib.Hosts.Api\MyELib.Hosts.Api.csproj", "{E64B0352-EEED-448B-A03E-1B067FE06212}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Элементы решения", "Элементы решения", "{8ECA6CE7-E4E1-492E-BAE9-9A2EBC7C0BA2}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyELib.Hosts.Migrator", "src\Hosts\MyELib.Hosts.Migrator\MyELib.Hosts.Migrator.csproj", "{905EB649-9D37-4AFA-BFB9-018BC70C7678}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,6 +96,10 @@ Global
 		{E64B0352-EEED-448B-A03E-1B067FE06212}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E64B0352-EEED-448B-A03E-1B067FE06212}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E64B0352-EEED-448B-A03E-1B067FE06212}.Release|Any CPU.Build.0 = Release|Any CPU
+		{905EB649-9D37-4AFA-BFB9-018BC70C7678}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{905EB649-9D37-4AFA-BFB9-018BC70C7678}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{905EB649-9D37-4AFA-BFB9-018BC70C7678}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{905EB649-9D37-4AFA-BFB9-018BC70C7678}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -112,6 +123,7 @@ Global
 		{6FA11F08-45A2-443E-B3AB-943DADF71E71} = {01B4A00A-C06A-439F-85D9-AB0F2A6559B8}
 		{D3C5DA99-5C66-4539-9FC0-FA56A5DB1593} = {6FA11F08-45A2-443E-B3AB-943DADF71E71}
 		{E64B0352-EEED-448B-A03E-1B067FE06212} = {B6F8411C-E4BE-4DAA-8306-CFB02D9E47D0}
+		{905EB649-9D37-4AFA-BFB9-018BC70C7678} = {B6F8411C-E4BE-4DAA-8306-CFB02D9E47D0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {364DC1EE-70A7-4A40-9948-08EB5BA00F0F}

@@ -14,10 +14,6 @@ namespace MyELib.Domain.Library
         /// <summary>
         /// Навигационное поле на список документов <see cref="Document.Document"/>
         /// </summary>
-        public List<Document.Document>? Documents { get; set; }
-        /// <summary>
-        /// Идентификаторы документов.
-        /// </summary>
-        public List<Guid>? DocumentIds { get; set; }
+        public virtual List<Document.Document>? Documents { get; set; }
     }
 }
