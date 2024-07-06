@@ -5,6 +5,7 @@ using LibraryEntity = MyELib.Domain.Library.Library;
 namespace MyELib.Infrastructure.DataAccess.Contexts.Library.Repositories
 {
     /// <inheritdoc cref="ILibraryRepository"/>
+    [Obsolete("Migrated to EFCore. Use LibraryRepository Instead!")]
     public class LibraryInMemoryRepository : ILibraryRepository
     {
         private readonly List<LibraryEntity> _libraries = [];

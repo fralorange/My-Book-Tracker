@@ -1,12 +1,16 @@
-﻿using MyELib.Application.AppData;
+﻿using Microsoft.EntityFrameworkCore;
+using MyELib.Application.AppData;
 using MyELib.Application.AppData.Contexts.Document.Repositories;
 using MyELib.Application.AppData.Contexts.Document.Services;
 using MyELib.Application.AppData.Contexts.Document.Validator;
 using MyELib.Application.AppData.Contexts.Library.Services;
 using MyELib.Infrastructure.ComponentRegistrar.Mappers.Document;
 using MyELib.Infrastructure.ComponentRegistrar.Mappers.Library;
+using MyELib.Infrastructure.DataAccess;
 using MyELib.Infrastructure.DataAccess.Contexts.Document.Repositories;
 using MyELib.Infrastructure.DataAccess.Contexts.Library.Repositories;
+using MyELib.Infrastructure.DataAccess.Interfaces;
+using MyELib.Infrastructure.Repository;
 
 namespace MyELib.Hosts.Api
 {
@@ -31,8 +35,9 @@ namespace MyELib.Hosts.Api
         /// </summary>
         public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
-            services.AddSingleton<ILibraryRepository, LibraryInMemoryRepository>();
-            services.AddSingleton<IDocumentRepository, DocumentInMemoryRepository>();
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddSingleton<ILibraryRepository, LibraryRepository>();
+            services.AddSingleton<IDocumentRepository, DocumentRepository>();
 
             return services;
         }
@@ -54,6 +59,22 @@ namespace MyELib.Hosts.Api
         public static IServiceCollection AddValidators(this IServiceCollection services)
         {
             services.AddScoped<IDocumentValidator, DocumentValidator>();
+
+            return services;
+        }
+
+        /// <summary>
+        /// Добавить контекст БД.
+        /// </summary>
+        public static IServiceCollection AddDbContextConfiguration(this IServiceCollection services)
+        {
+            services.AddSingleton<IDbContextOptionsConfigurator<BaseDbContext>, BaseDbContextOptionsConfigurator>();
+            services.AddDbContext<BaseDbContext>((serviceProvider, options) =>
+            {
+                var configurator = serviceProvider.GetRequiredService<IDbContextOptionsConfigurator<BaseDbContext>>();
+                configurator.Configure((DbContextOptionsBuilder<BaseDbContext>)options);
+            });
+            services.AddScoped<DbContext, BaseDbContext>();
 
             return services;
         }

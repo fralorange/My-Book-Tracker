@@ -5,6 +5,7 @@ using DocumentEntity = MyELib.Domain.Document.Document;
 namespace MyELib.Infrastructure.DataAccess.Contexts.Document.Repositories
 {
     /// <inheritdoc cref="IDocumentRepository"/>
+    [Obsolete("Migrated to EFCore. Use DocumentRepository Instead!")]
     public class DocumentInMemoryRepository : IDocumentRepository
     {
         private readonly List<DocumentEntity> _documents = [];

@@ -1,0 +1,45 @@
+services:
+  api:
+        container_name: my-e-lib-api
+        build:
+            context: .
+            dockerfile: src/Hosts/MyELib.Hosts.Api/Dockerfile
+        ports:
+          - 443:80
+        environment:
+          - ConnectionString__PostgresMyELibDb=Server=postgres;Database=Lib;Username=postgres;Password=password;Port=5432
+        networks:
+          - my-e-lib
+        depends_on:
+          - postgres
+
+  migrator:
+        container_name: my-e-lib-migrator
+        build:
+            context: .
+            dockerfile: src/Hosts/MyELib.Hosts.Migrator/Dockerfile
+        environment:
+          - ConnectionString__PostgresMyELibDb=Server=postgres;Database=Lib;Username=postgres;Password=password;Port=5432
+        networks:
+          - my-e-lib
+        depends_on:
+          - postgres
+        restart: on-failure:5
+
+  postgres:
+        container_name: postgres
+        image: postgres
+        environment:
+            POSTGRES_DB: Lib
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: password
+        volumes:
+          - pg-data:/var/lib/postgresql/data
+        networks:
+          - my-e-lib
+
+volumes:
+  pg-data:
+
+networks:
+  my-e-lib:

@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "MyELib.Hosts.Migrator": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}
