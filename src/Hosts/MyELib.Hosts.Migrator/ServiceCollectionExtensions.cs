@@ -16,7 +16,7 @@ namespace MyELib.Migrator
         private static IServiceCollection ConfigureDbConnections(this IServiceCollection services, IConfiguration configuration)
         {
             var connectionString = configuration.GetConnectionString(GlobalConstants.ConnectionString);
-            services.AddDbContext<MigrationDbContext.MigrationDbContext>(opt => opt.UseNpgsql(GlobalConstants.ConnectionString));
+            services.AddDbContext<MigrationDbContext.MigrationDbContext>(opt => opt.UseNpgsql(connectionString));
 
             return services;
         }

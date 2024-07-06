@@ -7,11 +7,12 @@ services:
         ports:
           - 443:80
         environment:
-          - ConnectionString__PostgresMyELibDb=Server=postgres;Database=Lib;Username=postgres;Password=password;Port=5432
+          - ConnectionString__PostgresMyELibDb=Host=my-e-lib-db;Database=Lib;Username=postgres;Password=password
         networks:
           - my-e-lib
         depends_on:
-          - postgres
+            postgres:
+                condition: service_healthy 
 
   migrator:
         container_name: my-e-lib-migrator
@@ -19,15 +20,16 @@ services:
             context: .
             dockerfile: src/Hosts/MyELib.Hosts.Migrator/Dockerfile
         environment:
-          - ConnectionString__PostgresMyELibDb=Server=postgres;Database=Lib;Username=postgres;Password=password;Port=5432
+          - ConnectionString__PostgresMyELibDb=Host=my-e-lib-db;Database=Lib;Username=postgres;Password=password
         networks:
           - my-e-lib
         depends_on:
-          - postgres
+            postgres:
+                condition: service_healthy      
         restart: on-failure:5
 
   postgres:
-        container_name: my-e-lib-postgres
+        container_name: my-e-lib-db
         image: postgres
         environment:
             POSTGRES_DB: Lib
@@ -39,6 +41,11 @@ services:
           - 5432:5432
         networks:
           - my-e-lib
+        healthcheck:
+          test: ["CMD-SHELL", "pg_isready -U postgres"]
+          interval: 5s
+          timeout: 5s
+          retries: 5
 
 volumes:
   pg-data:
