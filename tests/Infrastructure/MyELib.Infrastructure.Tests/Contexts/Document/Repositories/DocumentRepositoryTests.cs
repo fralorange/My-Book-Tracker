@@ -1,6 +1,8 @@
 ﻿using FluentAssertions;
+using Moq;
 using MyELib.Application.AppData.Contexts.Document.Repositories;
 using MyELib.Infrastructure.DataAccess.Contexts.Document.Repositories;
+using MyELib.Infrastructure.Repository;
 using System.Linq.Expressions;
 using DocumentEntity = MyELib.Domain.Document.Document;
 
@@ -12,8 +14,6 @@ namespace MyELib.Infrastructure.Tests.Contexts.Document.Repositories
         public async Task GetDocuments_ReturnAllDocuments()
         {
             // Arrange
-            IDocumentRepository documentRepository = new DocumentInMemoryRepository();
-
             var doc1 = new DocumentEntity
             {
                 Id = Guid.NewGuid(),
@@ -36,8 +36,10 @@ namespace MyELib.Infrastructure.Tests.Contexts.Document.Repositories
                 Library = new()
             };
 
-            await documentRepository.CreateAsync(doc1, CancellationToken.None);
-            await documentRepository.CreateAsync(doc2, CancellationToken.None);
+            var repositoryMock = new Mock<IRepository<DocumentEntity>>();
+            repositoryMock.Setup(r => r.GetAll()).Returns(new[] { doc1, doc2 }.AsQueryable());
+
+            IDocumentRepository documentRepository = new DocumentRepository(repositoryMock.Object);
 
             var expected = (IReadOnlyCollection<DocumentEntity>)[doc1, doc2];
 
@@ -52,8 +54,6 @@ namespace MyELib.Infrastructure.Tests.Contexts.Document.Repositories
         public async Task GetFilteredDocuments_ReturnAllFilteredDocuments()
         {
             // Arrange
-            IDocumentRepository documentRepository = new DocumentInMemoryRepository();
-
             var doc1 = new DocumentEntity
             {
                 Id = Guid.NewGuid(),
@@ -100,10 +100,12 @@ namespace MyELib.Infrastructure.Tests.Contexts.Document.Repositories
 
             Expression<Func<DocumentEntity, bool>> expression = doc => doc.FileType == ".docx";
 
-            await documentRepository.CreateAsync(doc1, CancellationToken.None);
-            await documentRepository.CreateAsync(doc2, CancellationToken.None);
-            await documentRepository.CreateAsync(doc3, CancellationToken.None);
-            await documentRepository.CreateAsync(doc4, CancellationToken.None);
+            var repositoryMock = new Mock<IRepository<DocumentEntity>>();
+            repositoryMock
+                .Setup(r => r.GetAllFiltered(It.Is<Expression<Func<DocumentEntity, bool>>>(e => e.Compile()(doc1) && e.Compile()(doc3))))
+                .Returns(new[] { doc1, doc3 }.AsQueryable());
+
+            IDocumentRepository documentRepository = new DocumentRepository(repositoryMock.Object);
 
             var expected = (IReadOnlyCollection<DocumentEntity>)[doc1, doc2, doc3, doc4];
             expected = expected.Where(expression.Compile()).ToArray();
@@ -119,8 +121,6 @@ namespace MyELib.Infrastructure.Tests.Contexts.Document.Repositories
         public async Task GetDocumentById_ReturnCorrectDocument()
         {
             // Arrange
-            IDocumentRepository documentRepository = new DocumentInMemoryRepository();
-
             var expected = new DocumentEntity
             {
                 Id = Guid.NewGuid(),
@@ -132,7 +132,11 @@ namespace MyELib.Infrastructure.Tests.Contexts.Document.Repositories
                 Library = new()
             };
 
-            await documentRepository.CreateAsync(expected, CancellationToken.None);
+            var repositoryMock = new Mock<IRepository<DocumentEntity>>();
+            repositoryMock.Setup(r => r.GetByIdAsync(expected.Id, CancellationToken.None))
+                .ReturnsAsync(expected);
+
+            IDocumentRepository documentRepository = new DocumentRepository(repositoryMock.Object);
 
             // Act
             var actual = await documentRepository.GetByIdAsync(expected.Id, CancellationToken.None);
@@ -145,8 +149,6 @@ namespace MyELib.Infrastructure.Tests.Contexts.Document.Repositories
         public async Task CreateDocument_DocumentCreatedSuccessfully()
         {
             // Arrange
-            IDocumentRepository documentRepository = new DocumentInMemoryRepository();
-
             var doc1 = new DocumentEntity
             {
                 Id = Guid.NewGuid(),
@@ -157,6 +159,12 @@ namespace MyELib.Infrastructure.Tests.Contexts.Document.Repositories
                 UploadedDate = DateTime.Now,
                 Library = new()
             };
+
+            var repositoryMock = new Mock<IRepository<DocumentEntity>>();
+            repositoryMock.Setup(r => r.GetAll())
+                .Returns(new[] { doc1 }.AsQueryable());
+
+            IDocumentRepository documentRepository = new DocumentRepository(repositoryMock.Object);
 
             // Act
             await documentRepository.CreateAsync(doc1, CancellationToken.None);
@@ -169,8 +177,6 @@ namespace MyELib.Infrastructure.Tests.Contexts.Document.Repositories
         public async Task UpdateDocument_DocumentUpdatedSuccessfully()
         {
             // Arrange
-            IDocumentRepository documentRepository = new DocumentInMemoryRepository();
-
             var doc1 = new DocumentEntity
             {
                 Id = Guid.NewGuid(),
@@ -181,7 +187,6 @@ namespace MyELib.Infrastructure.Tests.Contexts.Document.Repositories
                 UploadedDate = DateTime.Now,
                 Library = new()
             };
-            await documentRepository.CreateAsync(doc1, CancellationToken.None);
             var updatedDoc1 = new DocumentEntity
             {
                 Id = doc1.Id,
@@ -193,19 +198,24 @@ namespace MyELib.Infrastructure.Tests.Contexts.Document.Repositories
                 Library = doc1.Library,
             };
 
+            var repositoryMock = new Mock<IRepository<DocumentEntity>>();
+
+            IDocumentRepository documentRepository = new DocumentRepository(repositoryMock.Object);
+
             // Act
             await documentRepository.UpdateAsync(updatedDoc1, CancellationToken.None);
 
             // Assert
-            (await documentRepository.GetAllAsync(CancellationToken.None))
-                .Should().Contain(l => l.Id == updatedDoc1.Id && l.Name == updatedDoc1.Name);
+            repositoryMock.Verify(r => r.UpdateAsync(updatedDoc1, CancellationToken.None), Times.Once);
         }
 
         [Fact]
         public async Task DeleteDocument_DocumentDeletedSuccessfully()
         {
             // Arrange
-            IDocumentRepository documentRepository = new DocumentInMemoryRepository();
+            var repositoryMock = new Mock<IRepository<DocumentEntity>>();
+
+            IDocumentRepository documentRepository = new DocumentRepository(repositoryMock.Object);
 
             var doc1 = new DocumentEntity
             {
@@ -217,7 +227,6 @@ namespace MyELib.Infrastructure.Tests.Contexts.Document.Repositories
                 UploadedDate = DateTime.Now,
                 Library = new()
             };
-            await documentRepository.CreateAsync(doc1, CancellationToken.None);
 
             var targetDoc1 = new DocumentEntity
             {
@@ -234,7 +243,35 @@ namespace MyELib.Infrastructure.Tests.Contexts.Document.Repositories
             await documentRepository.DeleteAsync(targetDoc1, CancellationToken.None);
 
             // Assert
-            Assert.DoesNotContain(doc1, await documentRepository.GetAllAsync(CancellationToken.None));
+            repositoryMock.Verify(r => r.DeleteAsync(It.Is<DocumentEntity>(doc => doc.Id == doc.Id), CancellationToken.None), Times.Once);
+        }
+
+        [Fact]
+        public async Task LibraryExists_LibraryExistsTrue()
+        {
+            // Arrange
+            var targetId = Guid.NewGuid();
+            var doc1 = new DocumentEntity
+            {
+                Id = targetId,
+                Name = "Документ 4",
+                FileType = ".doc",
+                Content = [111, 12, 87, 113, 10, 75],
+                Size = 20000,
+                UploadedDate = DateTime.Now,
+                Library = new()
+            };
+
+            var repositoryMock = new Mock<IRepository<DocumentEntity>>();
+            repositoryMock.Setup(r => r.ExistsAsync(targetId, CancellationToken.None)).ReturnsAsync(true);
+
+            var libraryUserRepository = new DocumentRepository(repositoryMock.Object);
+
+            // Act
+            var result = await libraryUserRepository.ExistsAsync(targetId, CancellationToken.None);
+
+            // Assert
+            Assert.True(result);
         }
     }
 }

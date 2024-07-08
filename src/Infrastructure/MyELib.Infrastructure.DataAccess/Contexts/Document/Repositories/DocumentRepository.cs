@@ -29,7 +29,7 @@ namespace MyELib.Infrastructure.DataAccess.Contexts.Document.Repositories
         /// <inheritdoc/>
         public Task<IReadOnlyCollection<DocumentEntity>> GetAllFilteredAsync(Expression<Func<DocumentEntity, bool>> expression, CancellationToken token)
         {
-            var collection = (IReadOnlyCollection<DocumentEntity>)_repository.GetAll().Where(expression).ToArray();
+            var collection = (IReadOnlyCollection<DocumentEntity>)_repository.GetAllFiltered(expression).ToArray();
             return Task.Run(() => collection, token);
         }
 
@@ -56,6 +56,12 @@ namespace MyELib.Infrastructure.DataAccess.Contexts.Document.Repositories
         public Task DeleteAsync(DocumentEntity entity, CancellationToken token)
         {
             return _repository.DeleteAsync(entity, token);
+        }
+
+        /// <inheritdoc/>
+        public Task<bool> ExistsAsync(Guid id, CancellationToken token)
+        {
+            return _repository.ExistsAsync(id, token);
         }
     }
 }

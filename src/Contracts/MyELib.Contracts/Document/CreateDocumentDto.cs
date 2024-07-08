@@ -17,6 +17,7 @@ namespace MyELib.Contracts.Document
         /// <summary>
         /// Идентификатор библиотеки.
         /// </summary>
-        public Guid? LibraryId { get; set; }
+        [Required]
+        public Guid LibraryId { get; set; }
     }
 }

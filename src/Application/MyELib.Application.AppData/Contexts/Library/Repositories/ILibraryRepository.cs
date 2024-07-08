@@ -46,5 +46,12 @@ namespace MyELib.Application.AppData
         /// <param name="entity">Удаляемая сущность.</param>
         /// <param name="token">Токен отмены операции.</param>
         Task DeleteAsync(LibraryEntity entity, CancellationToken token);
+        /// <summary>
+        /// Проверяет на сущность библиотеки.
+        /// </summary>
+        /// <param name="id">Уникальный идентификатор.</param>
+        /// <param name="token">Токен отмены операции.</param>
+        /// <returns></returns>
+        Task<bool> ExistsAsync(Guid id, CancellationToken token);
     }
 }

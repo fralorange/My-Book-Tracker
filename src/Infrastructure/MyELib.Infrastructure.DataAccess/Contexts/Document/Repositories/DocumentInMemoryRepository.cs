@@ -48,5 +48,10 @@ namespace MyELib.Infrastructure.DataAccess.Contexts.Document.Repositories
         {
             return Task.Run(() => _documents.RemoveAll(doc => doc.Id == entity.Id), token);
         }
+
+        public Task<bool> ExistsAsync(Guid id, CancellationToken token)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

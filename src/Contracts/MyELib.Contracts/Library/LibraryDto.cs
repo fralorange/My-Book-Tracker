@@ -14,6 +14,10 @@ namespace MyELib.Contracts.Library
         /// <summary>
         /// Документы.
         /// </summary>
-        public IReadOnlyCollection<Document.DocumentDto>? Documents { get; set; }
+        public IEnumerable<Document.DocumentDto>? Documents { get; set; }
+        /// <summary>
+        /// Коллекция <see cref="LibraryUser.LibraryUserDto"/>
+        /// </summary>
+        public IEnumerable<LibraryUser.LibraryUserDto> LibraryUsers { get; set; }
     }
 }

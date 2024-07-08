@@ -1,10 +1,12 @@
 ﻿using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using MyELib.Application.AppData.Contexts.Document.Repositories;
 using MyELib.Application.AppData.Contexts.Document.Services;
 using MyELib.Contracts.Document;
 using MyELib.Infrastructure.ComponentRegistrar.Mappers.Document;
 using System.Linq.Expressions;
+using System.Security.Claims;
 using DocumentEntity = MyELib.Domain.Document.Document;
 
 namespace MyELib.Application.Tests.Contexts.Document.Services
@@ -26,7 +28,7 @@ namespace MyELib.Application.Tests.Contexts.Document.Services
                 Size = 10000,
                 UploadedBy = "123",
                 UploadedDate = DateTime.Now,
-                Library = new(),
+                Library = new() { LibraryUsers = [] },
             };
 
             var doc2 = new DocumentEntity
@@ -38,15 +40,16 @@ namespace MyELib.Application.Tests.Contexts.Document.Services
                 Size = 20000,
                 UploadedBy = "123",
                 UploadedDate = DateTime.Now,
-                Library = new(),
+                Library = new() { LibraryUsers = [] },
             };
 
+            var contextAccessorMock = new Mock<IHttpContextAccessor>();
             var repositoryMock = new Mock<IDocumentRepository>();
             repositoryMock.Setup(r => r.GetAllAsync(CancellationToken.None)).ReturnsAsync([doc1, doc2]);
 
             var expected = (IReadOnlyCollection<DocumentDto>)[documentMapper.MapToDto(doc1), documentMapper.MapToDto(doc2)];
 
-            var service = new DocumentService(repositoryMock.Object, documentMapper);
+            var service = new DocumentService(repositoryMock.Object, documentMapper, contextAccessorMock.Object);
 
             // Act
             var actual = await service.GetAllAsync(CancellationToken.None);
@@ -70,7 +73,7 @@ namespace MyELib.Application.Tests.Contexts.Document.Services
                 Size = 10000,
                 UploadedBy = "123",
                 UploadedDate = DateTime.Now,
-                Library = new(),
+                Library = new() { LibraryUsers = [] },
             };
 
             var doc2 = new DocumentEntity
@@ -82,7 +85,7 @@ namespace MyELib.Application.Tests.Contexts.Document.Services
                 Size = 20000,
                 UploadedBy = "123",
                 UploadedDate = DateTime.Now,
-                Library = new(),
+                Library = new() { LibraryUsers = [] },
             };
 
             var doc3 = new DocumentEntity
@@ -94,7 +97,7 @@ namespace MyELib.Application.Tests.Contexts.Document.Services
                 Size = 20000,
                 UploadedBy = "123",
                 UploadedDate = DateTime.Now,
-                Library = new(),
+                Library = new() { LibraryUsers = [] },
             };
 
             var doc4 = new DocumentEntity
@@ -106,12 +109,13 @@ namespace MyELib.Application.Tests.Contexts.Document.Services
                 Size = 20000,
                 UploadedBy = "123",
                 UploadedDate = DateTime.Now,
-                Library = new(),
+                Library = new() { LibraryUsers = [] },
             };
 
             Expression<Func<DocumentDto, bool>> expression = d => d.Name.EndsWith('1') || d.Name.EndsWith('3');
             var mappedExpression = documentMapper.MapToExpression(expression);
 
+            var contextAccessorMock = new Mock<IHttpContextAccessor>();
             var repositoryMock = new Mock<IDocumentRepository>();
             repositoryMock
                 .Setup(r => r.GetAllFilteredAsync(It.Is<Expression<Func<DocumentEntity, bool>>>(e => e.Compile()(doc1) && e.Compile()(doc3)), CancellationToken.None))
@@ -127,7 +131,7 @@ namespace MyELib.Application.Tests.Contexts.Document.Services
 
             expected = expected.Where(expression.Compile()).ToArray();
 
-            var service = new DocumentService(repositoryMock.Object, documentMapper);
+            var service = new DocumentService(repositoryMock.Object, documentMapper, contextAccessorMock.Object);
 
             // Act
             var actual = await service.GetAllFilteredAsync(expression, CancellationToken.None);
@@ -151,7 +155,7 @@ namespace MyELib.Application.Tests.Contexts.Document.Services
                 Size = 10000,
                 UploadedBy = "123",
                 UploadedDate = DateTime.Now,
-                Library = new(),
+                Library = new() { LibraryUsers = [] },
             };
 
             var doc2 = new DocumentEntity
@@ -163,11 +167,12 @@ namespace MyELib.Application.Tests.Contexts.Document.Services
                 Size = 20000,
                 UploadedBy = "123",
                 UploadedDate = DateTime.Now,
-                Library = new(),
+                Library = new() { LibraryUsers = [] },
             };
 
             var targetId = doc2.Id;
 
+            var contextAccessorMock = new Mock<IHttpContextAccessor>();
             var repositoryMock = new Mock<IDocumentRepository>();
             repositoryMock.Setup(r => r.GetByIdAsync(targetId, CancellationToken.None)).ReturnsAsync(doc2);
 
@@ -178,7 +183,7 @@ namespace MyELib.Application.Tests.Contexts.Document.Services
 
             var expected = collection.FirstOrDefault(doc => doc.Id == targetId);
 
-            var service = new DocumentService(repositoryMock.Object, documentMapper);
+            var service = new DocumentService(repositoryMock.Object, documentMapper, contextAccessorMock.Object);
 
             // Act
             var actual = await service.GetByIdAsync(targetId, CancellationToken.None);
@@ -196,10 +201,15 @@ namespace MyELib.Application.Tests.Contexts.Document.Services
             var createDoc1 = new CreateDocumentDto { Name = "Документ 1" };
             var createDocMetadata1 = new CreateDocumentDtoMetadata { Content = [], FileType = ".pdf", Size = 10000, UploadedDate = DateTime.Now };
 
+            var claim = new Claim(ClaimTypes.Name, "qwerty123");
+
+            var contextAccessorMock = new Mock<IHttpContextAccessor>();
+            contextAccessorMock.Setup(c => c.HttpContext.User.FindFirst(ClaimTypes.Name)!)
+                .Returns(claim);
             var repositoryMock = new Mock<IDocumentRepository>();
             repositoryMock.Setup(r => r.CreateAsync(It.IsAny<DocumentEntity>(), CancellationToken.None));
 
-            var service = new DocumentService(repositoryMock.Object, documentMapper);
+            var service = new DocumentService(repositoryMock.Object, documentMapper, contextAccessorMock.Object);
 
             // Act
             await service.CreateAsync(createDoc1, createDocMetadata1, CancellationToken.None);
@@ -223,15 +233,16 @@ namespace MyELib.Application.Tests.Contexts.Document.Services
                 Content = [],
                 Size = 10000,
                 UploadedDate = DateTime.Now,
-                Library = new()
+                Library = new() { LibraryUsers = [] },
             };
             var updateLibrary = new UpdateDocumentDto { Name = "Новый документ 1" };
 
+            var contextAccessorMock = new Mock<IHttpContextAccessor>();
             var repositoryMock = new Mock<IDocumentRepository>();
             repositoryMock.Setup(r => r.GetByIdAsync(existingDoc1.Id, CancellationToken.None)).ReturnsAsync(existingDoc1);
             repositoryMock.Setup(r => r.UpdateAsync(It.IsAny<DocumentEntity>(), CancellationToken.None));
 
-            var service = new DocumentService(repositoryMock.Object, documentMapper);
+            var service = new DocumentService(repositoryMock.Object, documentMapper, contextAccessorMock.Object);
 
             // Act
             await service.PatchAsync(existingDoc1.Id, updateLibrary, CancellationToken.None);
@@ -254,20 +265,54 @@ namespace MyELib.Application.Tests.Contexts.Document.Services
                 Content = [],
                 Size = 10000,
                 UploadedDate = DateTime.Now,
-                Library = new()
+                Library = new() { LibraryUsers = [] },
             };
 
+            var contextAccessorMock = new Mock<IHttpContextAccessor>();
             var repositoryMock = new Mock<IDocumentRepository>();
             repositoryMock.Setup(r => r.GetByIdAsync(existingDoc1.Id, CancellationToken.None)).ReturnsAsync(existingDoc1);
             repositoryMock.Setup(r => r.DeleteAsync(It.IsAny<DocumentEntity>(), CancellationToken.None));
 
-            var service = new DocumentService(repositoryMock.Object, documentMapper);
+            var service = new DocumentService(repositoryMock.Object, documentMapper, contextAccessorMock.Object);
 
             // Act
             await service.DeleteAsync(existingDoc1.Id, CancellationToken.None);
 
             // Assert
             repositoryMock.Verify(r => r.DeleteAsync(It.Is<DocumentEntity>(doc => doc.Id == existingDoc1.Id), CancellationToken.None), Times.Once);
+        }
+
+        [Fact]
+        public async Task DocumentExists_DocumentExistsTrue()
+        {
+            // Arrange
+            var documentMapper = new DocumentMapper();
+
+            var document1 = new DocumentEntity
+            {
+                Id = Guid.NewGuid(),
+                Name = "Док 1",
+                FileType = ".docx",
+                Content = [],
+                Size = 10000,
+                UploadedDate = DateTime.Now,
+                Library = new() { LibraryUsers = [] },
+            };
+
+            var targetId = document1.Id;
+
+            var repositoryMock = new Mock<IDocumentRepository>();
+            repositoryMock.Setup(r => r.ExistsAsync(targetId, CancellationToken.None)).ReturnsAsync(true);
+
+            var contextAccessorMock = new Mock<IHttpContextAccessor>();
+
+            var service = new DocumentService(repositoryMock.Object, documentMapper, contextAccessorMock.Object);
+
+            // Act
+            var result = await service.ExistsAsync(targetId, CancellationToken.None);
+
+            // Assert
+            Assert.True(result);
         }
     }
 }

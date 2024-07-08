@@ -78,6 +78,62 @@ namespace MyELib.Hosts.Migrator.Migrations
                     b.ToTable("Library", (string)null);
                 });
 
+            modelBuilder.Entity("MyELib.Domain.LibraryUser.LibraryUser", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("LibraryId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LibraryId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("LibraryUser", (string)null);
+                });
+
+            modelBuilder.Entity("MyELib.Domain.User.User", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("HashedPassword")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Salt")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Username")
+                        .IsUnique();
+
+                    b.ToTable("User", (string)null);
+                });
+
             modelBuilder.Entity("MyELib.Domain.Document.Document", b =>
                 {
                     b.HasOne("MyELib.Domain.Library.Library", "Library")
@@ -88,9 +144,35 @@ namespace MyELib.Hosts.Migrator.Migrations
                     b.Navigation("Library");
                 });
 
+            modelBuilder.Entity("MyELib.Domain.LibraryUser.LibraryUser", b =>
+                {
+                    b.HasOne("MyELib.Domain.Library.Library", "Library")
+                        .WithMany("LibraryUsers")
+                        .HasForeignKey("LibraryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyELib.Domain.User.User", "User")
+                        .WithMany("LibraryUsers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Library");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("MyELib.Domain.Library.Library", b =>
                 {
                     b.Navigation("Documents");
+
+                    b.Navigation("LibraryUsers");
+                });
+
+            modelBuilder.Entity("MyELib.Domain.User.User", b =>
+                {
+                    b.Navigation("LibraryUsers");
                 });
 #pragma warning restore 612, 618
         }
