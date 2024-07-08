@@ -4,6 +4,7 @@ using MyELib.Application.AppData.Contexts.Library.Services;
 using MyELib.Contracts.Identity;
 using MyELib.Contracts.Library;
 using System.Security.Claims;
+using X.PagedList;
 using IAuthorizationService = MyELib.Application.AppData.Contexts.Identity.Services.IAuthorizationService;
 
 namespace MyELib.Hosts.Api.Controllers
@@ -33,19 +34,23 @@ namespace MyELib.Hosts.Api.Controllers
         /// <summary>
         /// Получить все библиотеки.
         /// </summary>
+        /// <param name="pageSize">Размер страницы.</param>
+        /// <param name="pageNumber">Номер страницы.</param>
         /// <param name="token">Токен отмены операции.</param>
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> GetAsync(CancellationToken token)
+        public async Task<IActionResult> GetAsync([FromQuery] int pageNumber, [FromQuery] int pageSize, CancellationToken token)
         {
             var currentUsedId = Guid.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
             var collection = await _libraryService.GetAllAsync(token);
-            var permissionCollection = collection.Where(lib => lib.LibraryUsers.Any(lu => lu.UserId == currentUsedId)); 
             // GetAllFiltered не работает с MapToExpression, переделывать дизайн на AutoMapper или писать собственный маппер Expression нет времени...
-            return Ok(permissionCollection);
+            var permissionCollection = collection.Where(lib => lib.LibraryUsers.Any(lu => lu.UserId == currentUsedId));
+            var pagedCollection = permissionCollection.ToPagedList(pageNumber, pageSize);
+
+            return Ok(pagedCollection);
         }
 
         /// <summary>
