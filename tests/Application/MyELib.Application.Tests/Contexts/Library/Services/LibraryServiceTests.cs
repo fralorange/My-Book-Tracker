@@ -14,8 +14,8 @@ namespace MyELib.Application.Tests.Contexts.Library.Services
         public async Task GetLibraries_ReturnAllLibraries()
         {
             // Arrange
-            var library1 = new LibraryEntity { Id = Guid.NewGuid(), Name = "Библиотека 1", Documents = [] };
-            var library2 = new LibraryEntity { Id = Guid.NewGuid(), Name = "Библиотека 2", Documents = [] };
+            var library1 = new LibraryEntity { Id = Guid.NewGuid(), Name = "Библиотека 1", Documents = [], LibraryUsers = [] };
+            var library2 = new LibraryEntity { Id = Guid.NewGuid(), Name = "Библиотека 2", Documents = [], LibraryUsers = [] };
 
             var libraryMapper = new LibraryMapper();
 
@@ -37,14 +37,14 @@ namespace MyELib.Application.Tests.Contexts.Library.Services
         public async Task GetLibrariesFiltered_ReturnFilteredLibraries()
         {
             // Arrange
-            var library1 = new LibraryEntity { Id = Guid.NewGuid(), Name = "Библиотека 1", Documents = [] };
-            var library2 = new LibraryEntity { Id = Guid.NewGuid(), Name = "Библиотека 2", Documents = [] };
-            var library3 = new LibraryEntity { Id = Guid.NewGuid(), Name = "Библиотека 3", Documents = [] };
-            var library4 = new LibraryEntity { Id = Guid.NewGuid(), Name = "Библиотека 4", Documents = [] };
+            var library1 = new LibraryEntity { Id = Guid.NewGuid(), Name = "Библиотека 1", Documents = [], LibraryUsers = [] };
+            var library2 = new LibraryEntity { Id = Guid.NewGuid(), Name = "Библиотека 2", Documents = [], LibraryUsers = [] };
+            var library3 = new LibraryEntity { Id = Guid.NewGuid(), Name = "Библиотека 3", Documents = [], LibraryUsers = [] };
+            var library4 = new LibraryEntity { Id = Guid.NewGuid(), Name = "Библиотека 4", Documents = [], LibraryUsers = [] };
 
             var libraryMapper = new LibraryMapper();
 
-            Expression<Func<LibraryDto, bool>>  expression = dto => dto.Name.EndsWith('1') || dto.Name.EndsWith('3');
+            Expression<Func<LibraryDto, bool>> expression = dto => dto.Name.EndsWith('1') || dto.Name.EndsWith('3');
             var entityExpression = libraryMapper.MapToExpression(expression);
 
             var repositoryMock = new Mock<ILibraryRepository>();
@@ -71,9 +71,9 @@ namespace MyELib.Application.Tests.Contexts.Library.Services
         public async Task GetLibraryById_ReturnCorrectLibrary()
         {
             // Arrange
-            var library1 = new LibraryEntity { Id = Guid.NewGuid(), Name = "Библиотека 1", Documents = [] };
-            var library2 = new LibraryEntity { Id = Guid.NewGuid(), Name = "Библиотека 2", Documents = [] };
-            var library3 = new LibraryEntity { Id = Guid.NewGuid(), Name = "Библиотека 3", Documents = [] };
+            var library1 = new LibraryEntity { Id = Guid.NewGuid(), Name = "Библиотека 1", Documents = [], LibraryUsers = [] };
+            var library2 = new LibraryEntity { Id = Guid.NewGuid(), Name = "Библиотека 2", Documents = [], LibraryUsers = [] };
+            var library3 = new LibraryEntity { Id = Guid.NewGuid(), Name = "Библиотека 3", Documents = [], LibraryUsers = [] };
 
             var libraryMapper = new LibraryMapper();
 
@@ -124,12 +124,12 @@ namespace MyELib.Application.Tests.Contexts.Library.Services
             // Arrange
             var libraryMapper = new LibraryMapper();
 
-            var library1 = new LibraryEntity { Id = Guid.NewGuid(), Name = "Библиотека 1", Documents = [] };
+            var library1 = new LibraryEntity { Id = Guid.NewGuid(), Name = "Библиотека 1", Documents = [], LibraryUsers = [] };
             var updateLibrary1 = new UpdateLibraryDto { Name = "Обновленная библиотека 1", DocumentIds = [] };
 
             var repositoryMock = new Mock<ILibraryRepository>();
             repositoryMock.Setup(r => r.UpdateAsync(It.IsAny<LibraryEntity>(), CancellationToken.None));
-            repositoryMock.Setup(r => r.GetByIdAsync(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(library1);
+            repositoryMock.Setup(r => r.ExistsAsync(It.IsAny<Guid>(), CancellationToken.None)).ReturnsAsync(true);
 
             var service = new LibraryService(repositoryMock.Object, libraryMapper);
 
@@ -146,7 +146,7 @@ namespace MyELib.Application.Tests.Contexts.Library.Services
             // Arrange
             var libraryMapper = new LibraryMapper();
 
-            var library1 = new LibraryEntity { Id = Guid.NewGuid(), Name = "Библиотека 1", Documents = [] };
+            var library1 = new LibraryEntity { Id = Guid.NewGuid(), Name = "Библиотека 1", Documents = [], LibraryUsers = [] };
 
             var repositoryMock = new Mock<ILibraryRepository>();
             repositoryMock.Setup(r => r.DeleteAsync(It.IsAny<LibraryEntity>(), CancellationToken.None));
@@ -159,6 +159,28 @@ namespace MyELib.Application.Tests.Contexts.Library.Services
 
             // Assert
             repositoryMock.Verify(r => r.DeleteAsync(It.Is<LibraryEntity>(l => l.Id == library1.Id), CancellationToken.None), Times.Once);
+        }
+
+        [Fact]
+        public async Task LibraryExists_LibraryExistsTrue()
+        {
+            // Arrange
+            var libraryMapper = new LibraryMapper();
+
+            var library1 = new LibraryEntity { Id = Guid.NewGuid(), Name = "Библиотека 1", Documents = [], LibraryUsers = [] };
+
+            var targetId = library1.Id;
+
+            var repositoryMock = new Mock<ILibraryRepository>();
+            repositoryMock.Setup(r => r.ExistsAsync(targetId, CancellationToken.None)).ReturnsAsync(true);
+
+            var service = new LibraryService(repositoryMock.Object, libraryMapper);
+
+            // Act
+            var result = await service.ExistsAsync(targetId, CancellationToken.None);
+
+            // Assert
+            Assert.True(result);
         }
     }
 }

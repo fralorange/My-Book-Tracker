@@ -27,6 +27,13 @@ namespace MyELib.Infrastructure.Repository
         /// <returns>Сущность <see href="TEntity"/></returns>
         Task<TEntity?> GetByIdAsync(Guid id, CancellationToken token);
         /// <summary>
+        /// Возвращает сущность типа <see href="TEntity"/> по параметру (предикате).
+        /// </summary>
+        /// <param name="predicate">Параметр поиска.</param>
+        /// <param name="token">Токен отмены операции.</param>
+        /// <returns>Сущность <see href="TEntity"/></returns>
+        Task<TEntity?> GetByPredicateAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken token);
+        /// <summary>
         /// Добавляет сущность.
         /// </summary>
         /// <param name="entity">Сущность.</param>
@@ -44,5 +51,12 @@ namespace MyELib.Infrastructure.Repository
         /// <param name="entity">Сущность.</param>
         /// <param name="token">Токен отмены операции.</param>
         Task DeleteAsync(TEntity entity, CancellationToken token);
+        /// <summary>
+        /// Проверяет на сущность.
+        /// </summary>
+        /// <param name="id">Уникальный идентфикатор.</param>
+        /// <param name="token">Токен отмены операции.</param>
+        /// <returns></returns>
+        Task<bool> ExistsAsync(Guid id, CancellationToken token);
     }
 }

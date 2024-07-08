@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MyELib.Application.AppData.Contexts.Document.Services;
 using MyELib.Application.AppData.Contexts.Document.Validator;
 using MyELib.Contracts.Document;
+using MyELib.Contracts.Identity;
+using IAuthorizationService = MyELib.Application.AppData.Contexts.Identity.Services.IAuthorizationService;
 
 namespace MyELib.Hosts.Api.Controllers
 {
@@ -10,32 +13,24 @@ namespace MyELib.Hosts.Api.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class DocumentController : ControllerBase
     {
         private readonly IDocumentService _documentService;
         private readonly IDocumentValidator _documentValidator;
+        private readonly IAuthorizationService _authorizationService;
 
         /// <summary>
         /// Инициализирует контроллер документов.
         /// </summary>
         /// <param name="documentService">Сервис для работы с документами.</param>
         /// <param name="documentValidator">Валидатор документов.</param>
-        public DocumentController(IDocumentService documentService, IDocumentValidator documentValidator)
+        /// <param name="authorizationService">Сервис авторизации.</param>
+        public DocumentController(IDocumentService documentService, IDocumentValidator documentValidator, IAuthorizationService authorizationService)
         {
             _documentService = documentService;
             _documentValidator = documentValidator;
-        }
-
-        /// <summary>
-        /// Получить все документы.
-        /// </summary>
-        /// <param name="token"></param>
-        [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IReadOnlyCollection<DocumentDto>>> GetAsync(CancellationToken token)
-        {
-            var collection = await _documentService.GetAllAsync(token);
-            return Ok(collection);
+            _authorizationService = authorizationService;
         }
 
         /// <summary>
@@ -45,10 +40,17 @@ namespace MyELib.Hosts.Api.Controllers
         /// <param name="token">Токен отмены операции.</param>
         [HttpGet("{id:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAsync(Guid id, CancellationToken token)
         {
             var model = await _documentService.GetByIdAsync(id, token);
+
+            var perms = model?.Library is not null && await _authorizationService.HasAccessAsync(model.Library.Id, token);
+            if (!perms)
+                return Forbid();
+
             return model is null ? NotFound() : Ok(model);
         }
 
@@ -61,10 +63,18 @@ namespace MyELib.Hosts.Api.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ActionName(nameof(PostAsync))]
         public async Task<IActionResult> PostAsync([FromForm] CreateDocumentDto model, IFormFile file, CancellationToken token)
         {
             if (!_documentValidator.TryValidateFile(file, out var metadata))
                 return BadRequest();
+
+            var perms = await _authorizationService.HasAccessAsync(model.LibraryId, AuthRolesDto.Writer, token);
+            if (!perms)
+                return Forbid();
+
             var modelId = await _documentService.CreateAsync(model, metadata, token);
             return Created(nameof(PostAsync), modelId);
         }
@@ -78,12 +88,18 @@ namespace MyELib.Hosts.Api.Controllers
         [HttpPatch("{id:guid}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> PatchAsync(Guid id, [FromForm] UpdateDocumentDto model, CancellationToken token)
         {
             var doc = await _documentService.GetByIdAsync(id, token);
             if (doc is null)
                 return NotFound();
+
+            var perms = doc.Library is not null && await _authorizationService.HasAccessAsync(doc.Library.Id, AuthRolesDto.Writer, token);
+            if (!perms)
+                return Forbid();
+
             await _documentService.PatchAsync(id, model, token);
             return NoContent();
         }
@@ -95,12 +111,18 @@ namespace MyELib.Hosts.Api.Controllers
         /// <param name="token">Токен отмены операции.</param>
         [HttpDelete("{id:guid}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteAsync(Guid id, CancellationToken token)
         {
             var doc = await _documentService.GetByIdAsync(id, token);
             if (doc is null)
                 return NotFound();
+
+            var perms = doc.Library is not null && await _authorizationService.HasAccessAsync(doc.Library.Id, AuthRolesDto.Writer, token);
+            if (!perms)
+                return Forbid();
+
             await _documentService.DeleteAsync(id, token);
             return NoContent();
         }

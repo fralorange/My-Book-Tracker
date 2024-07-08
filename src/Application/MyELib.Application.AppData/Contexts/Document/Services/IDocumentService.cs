@@ -49,5 +49,12 @@ namespace MyELib.Application.AppData.Contexts.Document.Services
         /// <param name="id">Уникальный идентификатор.</param>
         /// <param name="token">Токен отмены операции.</param>
         Task DeleteAsync(Guid id, CancellationToken token);
+        /// <summary>
+        /// Проверяет на документ.
+        /// </summary>
+        /// <param name="id">Уникальный идентификатор.</param>
+        /// <param name="token">Токен отмены операции.</param>
+        /// <returns></returns>
+        Task<bool> ExistsAsync(Guid id, CancellationToken token);
     }
 }

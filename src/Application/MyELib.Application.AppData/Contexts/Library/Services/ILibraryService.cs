@@ -38,6 +38,7 @@ namespace MyELib.Application.AppData.Contexts.Library.Services
         /// Редактирует библиотеку.
         /// </summary>
         /// <param name="dto">Отредактированная библиотека.</param>
+        /// <param name="id">Уникальный идентификатор.</param>
         /// <param name="token">Токен отмены операции.</param>
         Task UpdateAsync(UpdateLibraryDto dto, Guid id, CancellationToken token);
         /// <summary>
@@ -46,5 +47,12 @@ namespace MyELib.Application.AppData.Contexts.Library.Services
         /// <param name="id">Уникальный идетификатор удаляемой библиотеки.</param>
         /// <param name="token">Токен отмены операции.</param>
         Task DeleteAsync(Guid id, CancellationToken token);
+        /// <summary>
+        /// Проверяет на сущность библиотеки.
+        /// </summary>
+        /// <param name="id">Уникальный идентификатор.</param>
+        /// <param name="token">Токен отмены операции.</param>
+        /// <returns></returns>
+        Task<bool> ExistsAsync(Guid id, CancellationToken token);
     }
 }

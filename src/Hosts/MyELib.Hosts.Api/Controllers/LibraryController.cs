@@ -1,6 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MyELib.Application.AppData.Contexts.Library.Services;
+using MyELib.Contracts.Identity;
 using MyELib.Contracts.Library;
+using System.Security.Claims;
+using IAuthorizationService = MyELib.Application.AppData.Contexts.Identity.Services.IAuthorizationService;
 
 namespace MyELib.Hosts.Api.Controllers
 {
@@ -9,17 +13,21 @@ namespace MyELib.Hosts.Api.Controllers
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class LibraryController : ControllerBase
     {
         private readonly ILibraryService _libraryService;
+        private readonly IAuthorizationService _authorizationService;
 
         /// <summary>
         /// Инициализирует контроллер библиотек.
         /// </summary>
         /// <param name="libraryService">Сервис библиотек.</param>
-        public LibraryController(ILibraryService libraryService)
+        /// <param name="authorizationService">Сервис авторизации.</param>
+        public LibraryController(ILibraryService libraryService, IAuthorizationService authorizationService)
         {
             _libraryService = libraryService;
+            _authorizationService = authorizationService;
         }
 
         /// <summary>
@@ -29,10 +37,15 @@ namespace MyELib.Hosts.Api.Controllers
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IReadOnlyCollection<LibraryDto>>> GetAsync(CancellationToken token)
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        public async Task<IActionResult> GetAsync(CancellationToken token)
         {
+            var currentUsedId = Guid.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
             var collection = await _libraryService.GetAllAsync(token);
-            return Ok(collection);
+            var permissionCollection = collection.Where(lib => lib.LibraryUsers.Any(lu => lu.UserId == currentUsedId)); 
+            // GetAllFiltered не работает с MapToExpression, переделывать дизайн на AutoMapper или писать собственный маппер Expression нет времени...
+            return Ok(permissionCollection);
         }
 
         /// <summary>
@@ -43,9 +56,15 @@ namespace MyELib.Hosts.Api.Controllers
         /// <returns></returns>
         [HttpGet("{id:guid}")]
         [ProducesResponseType(typeof(LibraryDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAsync(Guid id, CancellationToken token)
         {
+            var perms = await _authorizationService.HasAccessAsync(id, token);
+            if (!perms)
+                return Forbid();
+
             var model = await _libraryService.GetByIdAsync(id, token);
             return model is null ? NotFound() : Ok(model);
         }
@@ -58,6 +77,8 @@ namespace MyELib.Hosts.Api.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ActionName(nameof(PostAsync))]
         public async Task<IActionResult> PostAsync([FromForm] CreateLibraryDto model, CancellationToken token)
         {
             var modelId = await _libraryService.CreateAsync(model, token);
@@ -73,12 +94,19 @@ namespace MyELib.Hosts.Api.Controllers
         [HttpPut("{id:guid}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> PutAsync(Guid id, [FromForm] UpdateLibraryDto model, CancellationToken token)
         {
-            var library = await _libraryService.GetByIdAsync(id, token);
-            if (library is null)
+            var exists = await _libraryService.ExistsAsync(id, token);
+            if (!exists)
                 return NotFound();
+
+            var perms = await _authorizationService.HasAccessAsync(id, AuthRolesDto.Writer, token);
+            if (!perms)
+                return Forbid();
+
             await _libraryService.UpdateAsync(model, id, token);
             return NoContent();
         }
@@ -90,12 +118,18 @@ namespace MyELib.Hosts.Api.Controllers
         /// <param name="token">Токен отмены операции.</param>
         [HttpDelete("{id:guid}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Delete(Guid id, CancellationToken token)
+        public async Task<IActionResult> DeleteAsync(Guid id, CancellationToken token)
         {
-            var library = await _libraryService.GetByIdAsync(id, token);
-            if (library is null)
+            var exists = await _libraryService.ExistsAsync(id, token);
+            if (!exists)
                 return NotFound();
+
+            var perms = await _authorizationService.HasAccessAsync(id, AuthRolesDto.Owner, token);
+            if (!perms)
+                return Forbid();
+
             await _libraryService.DeleteAsync(id, token);
             return NoContent();
         }

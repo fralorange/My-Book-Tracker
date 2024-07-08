@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyELib.Infrastructure.DataAccess.Contexts.Document.Configuration;
 using MyELib.Infrastructure.DataAccess.Contexts.Library.Configuration;
+using MyELib.Infrastructure.DataAccess.Contexts.LibraryUser.Configuration;
+using MyELib.Infrastructure.DataAccess.Contexts.User.Configuration;
 
 namespace MyELib.Infrastructure.DataAccess
 {
@@ -17,6 +19,8 @@ namespace MyELib.Infrastructure.DataAccess
         {
             modelBuilder.ApplyConfiguration(new LibraryConfiguration());
             modelBuilder.ApplyConfiguration(new DocumentConfiguration());
+            modelBuilder.ApplyConfiguration(new UserConfiguration());
+            modelBuilder.ApplyConfiguration(new LibraryUserConfiguration());
 
             base.OnModelCreating(modelBuilder);
         }

@@ -12,8 +12,12 @@ namespace MyELib.Domain.Library
         /// </summary>
         public string Name { get; set; }
         /// <summary>
-        /// Навигационное поле на список документов <see cref="Document.Document"/>
+        /// Навигационное поле на коллекцию документов <see cref="Document.Document"/>
         /// </summary>
-        public virtual List<Document.Document>? Documents { get; set; }
+        public virtual IEnumerable<Document.Document>? Documents { get; set; }
+        /// <summary>
+        /// Навигационное поле на на коллекцию <see cref="LibraryUser.LibraryUser"/>
+        /// </summary>
+        public virtual IEnumerable<LibraryUser.LibraryUser> LibraryUsers { get; set; }
     }
 }

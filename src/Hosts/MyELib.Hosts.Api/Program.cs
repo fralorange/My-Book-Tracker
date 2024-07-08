@@ -10,18 +10,25 @@ namespace MyELib.Hosts.Api
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+                });
             builder.Services.AddServices();
             builder.Services.AddRepositories();
             builder.Services.AddMappers();
             builder.Services.AddValidators();
             builder.Services.AddDbContextConfiguration();
+            builder.Services.AddAuth(builder);
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(opt =>
             {
                 opt.AddSwaggerDoc();
                 opt.AddSwaggerXML();
+                opt.AddSwaggerSecurity();
             });
 
             var app = builder.Build();
@@ -35,6 +42,7 @@ namespace MyELib.Hosts.Api
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllers();

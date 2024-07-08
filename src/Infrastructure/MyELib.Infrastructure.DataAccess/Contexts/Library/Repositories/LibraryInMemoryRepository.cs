@@ -47,5 +47,10 @@ namespace MyELib.Infrastructure.DataAccess.Contexts.Library.Repositories
         {
             return Task.Run(() => _libraries.RemoveAll(lib => lib.Id == entity.Id));
         }
+
+        public Task<bool> ExistsAsync(Guid id, CancellationToken token)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

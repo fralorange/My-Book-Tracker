@@ -40,7 +40,13 @@ namespace MyELib.Infrastructure.Repository
         /// <inheritdoc/>
         public async Task<TEntity?> GetByIdAsync(Guid id, CancellationToken token)
         {
-            return await DbSet.FindAsync(id, token);
+            return await DbSet.FindAsync([id], cancellationToken: token);
+        }
+
+        /// <inheritdoc/>
+        public async Task<TEntity?> GetByPredicateAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken token)
+        {
+            return await DbSet.FirstOrDefaultAsync(predicate, token);
         }
 
         /// <inheritdoc/>
@@ -62,6 +68,18 @@ namespace MyELib.Infrastructure.Repository
         {
             DbSet.Remove(entity);
             await DbContext.SaveChangesAsync(token);
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> ExistsAsync(Guid id, CancellationToken token)
+        {
+            var entity = await DbSet.FindAsync([id], cancellationToken: token);
+            var exists = entity != null;
+            if (exists)
+            {
+                DbContext.Entry(entity).State = EntityState.Detached;
+            }
+            return exists;
         }
     }
 }
