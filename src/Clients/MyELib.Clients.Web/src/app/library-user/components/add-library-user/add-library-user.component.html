@@ -1,0 +1,22 @@
+<div *ngIf="editForm" class="container col-lg-5 p-3 border my-5">
+  <form [formGroup]="editForm" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label for="id1" class="form-label">Персональный идентификатор</label>
+      <input type="text" class="form-control" formControlName="id" id="id1">
+      <div *ngIf="editForm.get('id')?.invalid && (editForm.get('id')?.dirty || editForm.get('id')?.touched)" class="alert">
+        <div class="invalid-feedback d-block" *ngIf="editForm.get('id')?.errors?.['required']">Введите персональный идентификатор.</div>
+      </div>
+    </div>
+    <div class="mb-3">
+      <select formControlName="role" class="form-select">
+        <option value="0">Читатель</option>
+        <option value="1">Писатель</option>
+      </select>
+    </div>
+    <div *ngIf="editForm.invalid" class="alert alert-danger">
+      Пожалуйста введите все необходимые поля правильно!
+    </div>
+    <button type="submit" class="btn btn-outline-primary" [disabled]="editForm.invalid">Подтвердить.</button>
+  </form>
+</div>
+

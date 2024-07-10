@@ -1,0 +1,29 @@
+<div *ngIf="library" class="mt-2 d-flex justify-content-center">
+  <h5 class="display-5">{{ library.name }}</h5>
+</div>
+
+<div *ngIf="library" class="mt-2 container">
+  <button class="btn btn-outline-primary" [routerLink]="['/libraryUser/grant', library.id]">Выдать доступ</button>
+  <button *ngIf="isCurrentUserOwner" class="btn btn-outline-primary float-end" [routerLink]="['/libraryUser/', library.id]">У кого есть доступ?</button>
+</div>
+
+<div *ngIf="library?.documents" class="container mt-4">
+  <div class="row row-cols-3 g-4">
+    <div class="col" *ngFor="let document of library.documents">
+      <div class="card">
+        <a [routerLink]="['/document', document.id]" class="text-decoration-none">
+          <div class="card-img-top" style="background-color: #ccc; height: 15vh;"></div>
+        </a>
+        <div class="card-body">
+          <h5 class="card-title">{{ document.name }}</h5>
+          <h6 class="card-subtitle mb-2 text-muted">{{ document.uploadedDate }}</h6>
+          <p class="card-text">Загружено пользователем: {{ document.uploadedBy }}</p>
+        </div>
+        <div class="card-body">
+          <a class="btn btn-outline-primary" [routerLink]="['/document/edit', document.id]">Редактировать</a>
+          <a class="btn btn-outline-danger float-end" (click)="deleteDocument(document.id)">Удалить</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

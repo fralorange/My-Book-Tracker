@@ -1,0 +1,13 @@
+<div *ngIf="user" class="container my-xxl-5">
+  <div class="card">
+    <h5 class="card-header">{{ user.username }}</h5>
+    <div class="card-body">
+      <h5 class="card-title">E-mail: {{ user.email }}</h5>
+      <p class="card-text">Персональный идентификатор с помощью которого ваш товарищ может представить вам доступ к библиотеке: <span class="user-select-all"> {{ user.id }} </span> </p>
+      <a [routerLink]="['/user/edit']" class="btn btn-outline-primary">Редактировать</a>
+      <a class="btn btn-outline-info ms-3" (click)="logout()">Выйти</a>
+      <a class="btn btn-outline-danger ms-3" (click)="deleteCurrentUser()">Удалить аккаунт</a>
+    </div>
+  </div>
+
+</div>
