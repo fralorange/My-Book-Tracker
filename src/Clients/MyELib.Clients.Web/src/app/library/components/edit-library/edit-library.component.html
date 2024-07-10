@@ -1,0 +1,18 @@
+<div *ngIf="editForm" class="container col-lg-5 p-3 border my-5">
+  <form [formGroup]="editForm" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label for="name1" class="form-label">Название библиотеки</label>
+      <input type="text" class="form-control" formControlName="name" id="name1">
+      <div *ngIf="editForm.get('name')?.invalid && (editForm.get('name')?.dirty || editForm.get('name')?.touched)" class="alert">
+        <div class="invalid-feedback d-block" *ngIf="editForm.get('name')?.errors?.['required']">Введите название библиотеки</div>
+        <div class="invalid-feedback d-block" *ngIf="editForm.get('name')?.errors?.['minLength']">Требуется минимум 3 символа</div>
+        <div class="invalid-feedback d-block" *ngIf="editForm.get('name')?.errors?.['maxLength']">Максимум 100 символов</div>
+      </div>
+    </div>
+    <div *ngIf="editForm.invalid" class="alert alert-danger">
+      Пожалуйста введите все необходимые поля правильно!
+    </div>
+    <button type="submit" class="btn btn-outline-primary" [disabled]="editForm.invalid">Подтвердить.</button>
+  </form>
+</div>
+

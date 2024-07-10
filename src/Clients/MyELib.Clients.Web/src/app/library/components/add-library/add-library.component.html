@@ -1,0 +1,25 @@
+<div *ngIf="addForm" class="container col-lg-5 p-3 my-5 border">
+  <form [formGroup]="addForm" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label for="name1" class="form-label">Название библиотеки</label>
+      <input type="text" class="form-control" formControlName="name" id="name1">
+      <div *ngIf="addForm.get('name')?.invalid && (addForm.get('name')?.dirty || addForm.get('name')?.touched)" class="alert">
+        <div class="invalid-feedback d-block" *ngIf="addForm.get('name')?.errors?.['required']">Введите название библиотеки</div>
+      </div>
+    </div>
+    <div class="mb-3">
+      <label for="formFileMultiple" class="form-label">Документы</label>
+      <div formArrayName="documents">
+        <input class="form-control" #fileInput type="file" (change)="onDocumentPicked($event, fileInput)" id="formFileMultiple" aria-describedby="formFile1" multiple>
+      </div>
+      <div id="formFile1" class="form-text">
+        Можно оставить пустым
+      </div>
+    </div>
+    <div *ngIf="addForm.invalid" class="alert alert-danger">
+      Пожалуйста введите все необходимые поля правильно!
+    </div>
+    <button type="submit" class="btn btn-outline-primary" [disabled]="addForm.invalid">Подтвердить.</button>
+  </form>
+</div>
+

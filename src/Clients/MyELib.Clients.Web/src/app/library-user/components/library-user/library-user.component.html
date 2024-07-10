@@ -1,0 +1,24 @@
+<div class="container">
+  <table class="table table-striped table-hover table-bordered" *ngIf="libraryUsers">
+    <thead class="text-center">
+      <tr>
+        <th scope="col">Идентификатор</th>
+        <th scope="col">Роль</th>
+        <th scope="col"></th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody class="text-center">
+      <tr *ngFor="let libraryUser of libraryUsers">
+        <td>{{ libraryUser.userId }}</td>
+        <td>{{ roleNumberToString(libraryUser.role) }}</td>
+        <td>
+          <div *ngIf="libraryUser.role != 2" class="d-grid gap-2 col-9 mx-auto"><button type="button" class="btn btn-outline-primary" [routerLink]="['/libraryUser/edit', libraryUser.id]">Редактировать</button></div>
+        </td>
+        <td>
+          <div *ngIf="libraryUser.role != 2" class="d-grid gap-2 col-9 mx-auto"><button type="button" class="btn btn-outline-danger" (click)="deleteLibraryUser(libraryUser.id)">Отозвать</button></div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
