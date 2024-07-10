@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { LibraryModel } from '../models/library.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs/internal/Observable';
 import { TokenService } from '../../auth/services/token.service';
 import { tap } from 'rxjs/internal/operators/tap';
