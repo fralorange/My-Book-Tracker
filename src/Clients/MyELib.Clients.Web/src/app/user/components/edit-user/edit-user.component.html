@@ -1,0 +1,31 @@
+<h3 class="pb-3 my-5" style="text-align:center">Вход в систему.</h3>
+
+<div *ngIf="editForm" class="container col-lg-5 p-3 border">
+  <form [formGroup]="editForm" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label for="emailInput1" class="form-label">Электронная почта</label>
+      <input type="email" class="form-control" formControlName="email" id="emailInput1">
+      <div *ngIf="editForm.get('email')?.invalid && (editForm.get('email')?.dirty || editForm.get('email')?.touched)" class="alert">
+        <div class="invalid-feedback d-block" *ngIf="editForm.get('email')?.errors?.['required']">Введите электронную почту</div>
+        <div class="invalid-feedback d-block" *ngIf="editForm.get('email')?.errors?.['email']">Введите электронную почту в правильном формате</div>
+      </div>
+    </div>
+    <div class="mb-3">
+      <label for="inputPassword5" class="form-label">Пароль</label>
+      <input type="password" id="inputPassword5" class="form-control" formControlName="password" aria-describedby="passwordDesc">
+      <div id="passwordDesc" class="form-text">
+        Минимум 8 символов и максимум 100 символов.
+      </div>
+      <div *ngIf="editForm.get('password')?.invalid && (editForm.get('password')?.dirty || editForm.get('password')?.touched)" class="alert">
+        <div class="invalid-feedback d-block" *ngIf="editForm.get('password')?.errors?.['required']">Введите пароль</div>
+        <div class="invalid-feedback d-block" *ngIf="editForm.get('password')?.errors?.['minLength']">Минимум 8 символов</div>
+        <div class="invalid-feedback d-block" *ngIf="editForm.get('password')?.errors?.['maxLength']">Максимум 100 символов</div>
+      </div>
+    </div>
+    <div *ngIf="editForm.invalid" class="alert alert-danger">
+      Пожалуйста введите все необходимые поля правильно!
+    </div>
+    <button type="submit" class="btn btn-outline-primary" [disabled]="editForm.invalid">Подтвердить.</button>
+  </form>
+</div>
+

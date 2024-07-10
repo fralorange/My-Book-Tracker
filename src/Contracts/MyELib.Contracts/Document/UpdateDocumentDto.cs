@@ -7,6 +7,9 @@ namespace MyELib.Contracts.Document
     /// </summary>
     public class UpdateDocumentDto
     {
+        /// <summary>
+        /// Название документа.
+        /// </summary>
         [MinLength(3)]
         [MaxLength(50)]
         public required string Name { get; set; }

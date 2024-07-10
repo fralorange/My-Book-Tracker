@@ -21,6 +21,12 @@ namespace MyELib.Hosts.Api
             builder.Services.AddValidators();
             builder.Services.AddDbContextConfiguration();
             builder.Services.AddAuth(builder);
+
+            builder.Services.AddCors(options => options.AddPolicy(name: "MyELibOrigins", 
+                policy =>
+                {
+                    policy.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader();
+                }));
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
             builder.Services.AddEndpointsApiExplorer();
@@ -39,6 +45,8 @@ namespace MyELib.Hosts.Api
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseCors("MyELibOrigins");
 
             app.UseHttpsRedirection();
 

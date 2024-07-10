@@ -90,7 +90,7 @@ namespace MyELib.Hosts.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> PatchAsync(Guid id, [FromForm] UpdateDocumentDto model, CancellationToken token)
+        public async Task<IActionResult> PatchAsync(Guid id, [FromBody] UpdateDocumentDto model, CancellationToken token)
         {
             var doc = await _documentService.GetByIdAsync(id, token);
             if (doc is null)

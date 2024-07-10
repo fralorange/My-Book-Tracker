@@ -31,7 +31,7 @@ namespace MyELib.Hosts.Api.Controllers
         [AllowAnonymous]
         [ProducesResponseType(typeof(LoginUserDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> PostAsync([FromForm] LoginUserDto model, CancellationToken token)
+        public async Task<IActionResult> PostAsync([FromBody] LoginUserDto model, CancellationToken token)
         {
             var securityToken = await _authService.LoginAsync(model, token);
             if (string.IsNullOrEmpty(securityToken))
@@ -49,7 +49,7 @@ namespace MyELib.Hosts.Api.Controllers
         [AllowAnonymous]
         [ProducesResponseType(typeof(CreateUserDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> PostAsync([FromForm] CreateUserDto model, CancellationToken token) 
+        public async Task<IActionResult> PostAsync([FromBody] CreateUserDto model, CancellationToken token) 
         {
             var id = await _authService.RegisterAsync(model, token);
             if (id == Guid.Empty)

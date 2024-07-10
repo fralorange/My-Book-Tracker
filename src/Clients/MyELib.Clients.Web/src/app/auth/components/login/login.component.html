@@ -1,0 +1,35 @@
+<h3 class="pb-3 my-5" style="text-align:center">Вход в систему.</h3>
+
+ <div *ngIf="loginForm" class="container col-lg-5 p-3 border">
+   <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+     <div class="mb-3">
+       <label for="usernameInput1" class="form-label">Имя пользователя</label>
+       <input type="text" class="form-control" formControlName="username" id="usernameInput1" aria-describedby="usernameDesc">
+       <div id="usernameDesc" class="form-text">
+         Минимум 4 символа и максимум 50 символов.
+       </div>
+       <div *ngIf="loginForm.get('username')?.invalid && (loginForm.get('username')?.dirty || loginForm.get('username')?.touched)" class="alert">
+         <div class="invalid-feedback d-block" *ngIf="loginForm.get('username')?.errors?.['required']">Введите имя пользователя</div>
+         <div class="invalid-feedback d-block" *ngIf="loginForm.get('username')?.errors?.['minLength']">Минимум 4 символа</div>
+         <div class="invalid-feedback d-block" *ngIf="loginForm.get('username')?.errors?.['maxLength']">Максимум 50 символов</div>
+       </div>
+     </div>
+     <div class="mb-3">
+       <label for="inputPassword5" class="form-label">Пароль</label>
+       <input type="password" id="inputPassword5" class="form-control" formControlName="password" aria-describedby="passwordDesc">
+       <div id="passwordDesc" class="form-text">
+         Минимум 8 символов и максимум 100 символов.
+       </div>
+       <div *ngIf="loginForm.get('password')?.invalid && (loginForm.get('password')?.dirty || loginForm.get('password')?.touched)" class="alert">
+         <div class="invalid-feedback d-block" *ngIf="loginForm.get('password')?.errors?.['required']">Введите пароль</div>
+         <div class="invalid-feedback d-block" *ngIf="loginForm.get('password')?.errors?.['minLength']">Минимум 8 символов</div>
+         <div class="invalid-feedback d-block" *ngIf="loginForm.get('password')?.errors?.['maxLength']">Максимум 100 символов</div>
+       </div>
+     </div>
+     <div *ngIf="loginForm.invalid" class="alert alert-danger">
+       Пожалуйста введите все необходимые поля правильно!
+     </div>
+     <button type="submit" class="btn btn-outline-primary" [disabled]="loginForm.invalid">Подтвердить.</button>
+   </form>
+ </div>
+

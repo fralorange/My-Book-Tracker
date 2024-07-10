@@ -10,20 +10,25 @@ namespace MyELib.Infrastructure.DataAccess.Contexts.Library.Repositories
     {
         private readonly List<LibraryEntity> _libraries = [];
 
+        /// <inheritdoc/>
         public Task<IReadOnlyCollection<LibraryEntity>> GetAllAsync(CancellationToken token)
         {
             return Task.Run(() => (IReadOnlyCollection<LibraryEntity>)_libraries.AsReadOnly(), token);
         }
 
+        /// <inheritdoc/>
         public Task<IReadOnlyCollection<LibraryEntity>> GetAllFilteredAsync(Expression<Func<LibraryEntity, bool>> predicate, CancellationToken token)
         {
             return Task.Run(() => (IReadOnlyCollection<LibraryEntity>)_libraries.Where(predicate.Compile()).ToArray(), token);
         }
 
+        /// <inheritdoc/>
         public Task<LibraryEntity?> GetByIdAsync(Guid id, CancellationToken token)
         {
             return Task.Run(() => _libraries.FirstOrDefault(l => l.Id == id), token);
         }
+
+        /// <inheritdoc/>
         public Task<Guid> CreateAsync(LibraryEntity entity, CancellationToken token)
         {
             entity.Id = Guid.NewGuid();
@@ -34,6 +39,7 @@ namespace MyELib.Infrastructure.DataAccess.Contexts.Library.Repositories
             }, token);
         }
 
+        /// <inheritdoc/>
         public Task UpdateAsync(LibraryEntity entity, CancellationToken token)
         {
             return Task.Run(() =>
@@ -43,11 +49,13 @@ namespace MyELib.Infrastructure.DataAccess.Contexts.Library.Repositories
             }, token);
         }
 
+        /// <inheritdoc/>
         public Task DeleteAsync(LibraryEntity entity, CancellationToken token)
         {
             return Task.Run(() => _libraries.RemoveAll(lib => lib.Id == entity.Id));
         }
 
+        /// <inheritdoc/>
         public Task<bool> ExistsAsync(Guid id, CancellationToken token)
         {
             throw new NotImplementedException();

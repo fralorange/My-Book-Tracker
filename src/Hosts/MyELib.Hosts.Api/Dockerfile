@@ -1,31 +1,22 @@
-#See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER app
+# Stage 1: Base
+FROM node:20-alpine AS base
 WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
+EXPOSE 4200
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION=Release
+# Stage 2: Build
+FROM node:20-alpine AS build
 WORKDIR /src
-COPY ["src/Application/MyELib.Application.AppData/MyELib.Application.AppData.csproj", "src/Application/MyELib.Application.AppData/"]
-COPY ["src/Contracts/MyELib.Contracts/MyELib.Contracts.csproj", "src/Contracts/MyELib.Contracts/"]
-COPY ["src/Domain/MyELib.Domain/MyELib.Domain.csproj", "src/Domain/MyELib.Domain/"]
-COPY ["src/Infrastructure/MyELib.Infrastructure/MyELib.Infrastructure.csproj", "src/Infrastructure/MyELib.Infrastructure/"]
-COPY ["src/Infrastructure/MyELib.Infrastructure.ComponentRegistrar/MyELib.Infrastructure.ComponentRegistrar.csproj", "src/Infrastructure/MyELib.Infrastructure.ComponentRegistrar/"]
-COPY ["src/Infrastructure/MyELib.Infrastructure.DataAccess/MyELib.Infrastructure.DataAccess.csproj", "src/Infrastructure/MyELib.Infrastructure.DataAccess/"]
-COPY ["src/Hosts/MyELib.Hosts.Api/MyELib.Hosts.Api.csproj", "src/Hosts/MyELib.Hosts.Api/"]
-RUN dotnet restore "./src/Hosts/MyELib.Hosts.Api/MyELib.Hosts.Api.csproj"
-COPY . .
-WORKDIR "/src/src/Hosts/MyELib.Hosts.Api"
-RUN dotnet build "./MyELib.Hosts.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
+COPY package*.json./
+RUN npm install
+COPY..
+RUN ng build --prod
 
+# Stage 3: Publish
 FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./MyELib.Hosts.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN ng build --prod --output-path /app/publish
 
+# Stage 4: Final
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "MyELib.Hosts.Api.dll"]
+COPY --from=publish /app/publish.
+CMD ["npm", "start"]

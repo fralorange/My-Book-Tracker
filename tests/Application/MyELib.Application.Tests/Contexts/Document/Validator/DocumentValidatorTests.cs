@@ -15,7 +15,7 @@ namespace MyELib.Application.Tests.Contexts.Document.Validator
             var documentValidator = new DocumentValidator();
 
             var fileMock = new Mock<IFormFile>();
-            fileMock.SetupGet(f => f.FileName).Returns("example.pdf");
+            fileMock.SetupGet(f => f.FileName).Returns("example.txt");
             fileMock.SetupGet(f => f.Length).Returns(17450);
 
             var date = DateTime.UtcNow;
@@ -31,7 +31,7 @@ namespace MyELib.Application.Tests.Contexts.Document.Validator
             var expected = new CreateDocumentDtoMetadata
             {
                 Content = newBytes,
-                FileType = ".pdf",
+                FileType = ".txt",
                 Size = 17450,
                 UploadedDate = date
             };

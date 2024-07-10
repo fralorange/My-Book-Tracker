@@ -34,6 +34,7 @@ namespace MyELib.Application.AppData.Identity.Handlers
             _configuration = configuration;
         }
 
+        /// <inheritdoc/>
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             bool tokenPresented = _contextAccessor.HttpContext

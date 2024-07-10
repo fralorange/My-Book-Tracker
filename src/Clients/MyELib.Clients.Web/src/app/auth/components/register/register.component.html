@@ -1,0 +1,43 @@
+<h3 class="pb-3 my-5" style="text-align:center">Вход в систему.</h3>
+
+<div *ngIf="registerForm" class="container col-lg-5 p-3 border">
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label for="emailInput1" class="form-label">Электронная почта</label>
+      <input type="email" class="form-control" formControlName="email" id="emailInput1">
+      <div *ngIf="registerForm.get('email')?.invalid && (registerForm.get('email')?.dirty || registerForm.get('email')?.touched)" class="alert">
+        <div class="invalid-feedback d-block" *ngIf="registerForm.get('email')?.errors?.['required']">Введите электронную почту</div>
+        <div class="invalid-feedback d-block" *ngIf="registerForm.get('email')?.errors?.['email']">Введите электронную почту в правильном формате</div>
+      </div>
+    </div>
+    <div class="mb-3">
+      <label for="usernameInput1" class="form-label">Имя пользователя</label>
+      <input type="text" class="form-control" formControlName="username" id="usernameInput1" aria-describedby="usernameDesc">
+      <div id="usernameDesc" class="form-text">
+        Минимум 4 символа и максимум 50 символов.
+      </div>
+      <div *ngIf="registerForm.get('username')?.invalid && (registerForm.get('username')?.dirty || registerForm.get('username')?.touched)" class="alert">
+        <div class="invalid-feedback d-block" *ngIf="registerForm.get('username')?.errors?.['required']">Введите имя пользователя</div>
+        <div class="invalid-feedback d-block" *ngIf="registerForm.get('username')?.errors?.['minLength']">Минимум 4 символа</div>
+        <div class="invalid-feedback d-block" *ngIf="registerForm.get('username')?.errors?.['maxLength']">Максимум 50 символов</div>
+      </div>
+    </div>
+    <div class="mb-3">
+      <label for="inputPassword5" class="form-label">Пароль</label>
+      <input type="password" id="inputPassword5" class="form-control" formControlName="password" aria-describedby="passwordDesc">
+      <div id="passwordDesc" class="form-text">
+        Минимум 8 символов и максимум 100 символов.
+      </div>
+      <div *ngIf="registerForm.get('password')?.invalid && (registerForm.get('password')?.dirty || registerForm.get('password')?.touched)" class="alert">
+        <div class="invalid-feedback d-block" *ngIf="registerForm.get('password')?.errors?.['required']">Введите пароль</div>
+        <div class="invalid-feedback d-block" *ngIf="registerForm.get('password')?.errors?.['minLength']">Минимум 8 символов</div>
+        <div class="invalid-feedback d-block" *ngIf="registerForm.get('password')?.errors?.['maxLength']">Максимум 100 символов</div>
+      </div>
+    </div>
+    <div *ngIf="registerForm.invalid" class="alert alert-danger">
+      Пожалуйста введите все необходимые поля правильно!
+    </div>
+    <button type="submit" class="btn btn-outline-primary" [disabled]="registerForm.invalid">Подтвердить.</button>
+  </form>
+</div>
+

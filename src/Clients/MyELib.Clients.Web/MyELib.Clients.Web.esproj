@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/1.0.784122">
+  <PropertyGroup>
+    <StartupCommand>npm start</StartupCommand>
+    <JavaScriptTestFramework>Jasmine</JavaScriptTestFramework>
+    <!-- Allows the build (or compile) script located on package.json to run on Build -->
+    <ShouldRunBuildScript>false</ShouldRunBuildScript>
+    <!-- Folder where production build objects will be placed -->
+    <BuildOutputFolder>$(MSBuildProjectDirectory)\dist\MyELib.Clients.Web\browser\</BuildOutputFolder>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="src\app\components\**" />
+    <None Remove="src\app\models\**" />
+    <None Remove="src\app\services\**" />
+    <TypeScriptConfiguration Remove="src\app\components\**" />
+    <TypeScriptConfiguration Remove="src\app\models\**" />
+    <TypeScriptConfiguration Remove="src\app\services\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\app\auth\components\" />
+    <Folder Include="src\app\auth\services\" />
+    <Folder Include="src\app\auth\guards\" />
+    <Folder Include="src\app\document\components\" />
+    <Folder Include="src\app\document\models\" />
+    <Folder Include="src\app\document\services\" />
+    <Folder Include="src\app\library-user\components\" />
+    <Folder Include="src\app\library-user\services\" />
+    <Folder Include="src\app\library-user\models\" />
+    <Folder Include="src\app\library\services\" />
+    <Folder Include="src\app\library\components\" />
+    <Folder Include="src\app\library\pagination\" />
+    <Folder Include="src\app\roles\models\" />
+    <Folder Include="src\app\user\components\" />
+    <Folder Include="src\app\user\services\" />
+  </ItemGroup>
+</Project>
