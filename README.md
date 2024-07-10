@@ -7,7 +7,7 @@
 Чтобы начать работу над проектом, необходимо склонировать репозиторий git clone по следующей ссылке:
 
 ```cmd
-git clone https://github.com/fralorange/My-E-Lib/tree/master-debug-deployment
+git clone -b master-debug-deployment https://github.com/fralorange/My-E-Lib.git
 ```
 
 ## Установка зависимостей
