@@ -48,7 +48,7 @@ namespace MyELib.Hosts.Api
 
             app.UseCors("MyELibOrigins");
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseAuthentication();
             app.UseAuthorization();

@@ -3,7 +3,7 @@ import { TokenService } from '../../auth/services/token.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { DocumentModel } from '../models/document.model';
 import { Observable } from 'rxjs/internal/Observable';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'

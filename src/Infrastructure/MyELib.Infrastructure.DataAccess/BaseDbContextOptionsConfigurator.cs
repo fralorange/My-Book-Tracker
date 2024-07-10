@@ -23,7 +23,7 @@ namespace MyELib.Infrastructure.DataAccess
         public void Configure(DbContextOptionsBuilder<BaseDbContext> builder)
         {
             var connectionString = _configuration.GetConnectionString(ConnectionString);
-
+            
             builder
                 .UseNpgsql(connectionString)
                 .UseLazyLoadingProxies();

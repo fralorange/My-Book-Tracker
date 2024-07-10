@@ -1,17 +1,29 @@
-FROM node:20-alpine AS build
-WORKDIR /app
+# Stage 1: Compile and Build angular codebase
 
-COPY package*.json./
-RUN npm install -g @angular/cli@17
-RUN npm ci
-COPY..
-RUN ng build
+# Use official node image as the base image
+FROM node:latest as build
 
-FROM nginx:alpine
+# Set the working directory
+WORKDIR /src
 
-COPY --from=build /app/dist/angular-docker/browser /usr/share/nginx/html
+# Add the source code to app
+COPY ["src/Clients/MyELib.Clients.Web/", "src/Clients/MyELib.Clients.Web/"]
 
-EXPOSE 8080
+# Install all the dependencies
+RUN npm ci --prefix "src/Clients/MyELib.Clients.Web/"
 
-# Run nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Generate the build of the application
+RUN npm run build --prefix "src/Clients/MyELib.Clients.Web/"
+
+# Stage 2: Serve app with nginx server
+
+# Use official nginx image as the base image
+FROM nginx:stable
+
+COPY src/Clients/MyELib.Clients.Web/nginx.conf /etc/nginx/nginx.conf
+RUN rm -rf /usr/share/nginx/html
+# Copy the build output to replace the default nginx contents.
+COPY --from=build /src/src/Clients/MyELib.Clients.Web/dist/my-elib.clients.web/browser /usr/share/nginx/html
+
+# Expose port 80
+EXPOSE 80
