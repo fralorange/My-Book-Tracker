@@ -5,9 +5,14 @@ services:
             context: .
             dockerfile: src/Hosts/MyELib.Hosts.Api/Dockerfile
         ports:
-          - 443:80
+          - 5000:5000
+          - 5001:5001
         environment:
-          - ConnectionString__PostgresMyELibDb=Host=my-e-lib-db;Database=Lib;Username=postgres;Password=password
+          - ConnectionStrings__PostgresMyELibDb=Host=my-e-lib-db;Database=Lib;Username=postgres;Password=password;Port=5432;
+          - ASPNETCORE_ENVIRONMENT=Development 
+          - ASPNETCORE_URLS=http://+:5000 
+          - ASPNETCORE_HTTP_PORTS=5000
+          - ASPNETCORE_HTTP_PORTS=5001
         networks:
           - my-e-lib
         depends_on:
@@ -20,7 +25,7 @@ services:
             context: .
             dockerfile: src/Hosts/MyELib.Hosts.Migrator/Dockerfile
         environment:
-          - ConnectionString__PostgresMyELibDb=Host=my-e-lib-db;Database=Lib;Username=postgres;Password=password
+          - ConnectionStrings__PostgresMyELibDb=Host=my-e-lib-db;Database=Lib;Username=postgres;Password=password;Port=5432;
         networks:
           - my-e-lib
         depends_on:
@@ -47,8 +52,22 @@ services:
           timeout: 5s
           retries: 5
 
+  client:
+        container_name: my-e-lib-client
+        build:
+            context: .
+            dockerfile: src/Clients/MyELib.Clients.Web/Dockerfile
+        ports:
+          - 4200:80
+        networks:
+          - my-e-lib
+        depends_on:
+          api:
+            condition: service_started
+
 volumes:
   pg-data:
 
 networks:
   my-e-lib:
+    driver: bridge
