@@ -29,15 +29,39 @@ namespace MyELib.Hosts.Api.Controllers
         }
 
         /// <summary>
+        /// Возвращает отдельную библиотеку-пользователя.
+        /// </summary>
+        /// <param name="id">Уникальный идентификатор.</param>
+        /// <param name="token">Токен отмены операции.</param>
+        /// <returns></returns>
+        [HttpGet("{id:guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetAsync(Guid id, CancellationToken token)
+        {
+            var entity = await _libraryUserService.GetByIdAsync(id, token);
+            if (entity is null)
+                return NotFound();
+            var perms = await _authorizationService.HasAccessAsync(entity.LibraryId, AuthRolesDto.Owner, token);
+            if (!perms)
+                return Forbid();
+            return Ok(entity);
+        }
+
+        /// <summary>
         /// Создаёт библиотеку-пользователя для текущего пользователя и выдаёт максимальную роль.
         /// </summary>
+        /// <param name="model">Модель.</param>
+        /// <param name="token">Токен отмены операции.</param>
+        /// <returns></returns>
         [HttpPost("init")]
         [ProducesResponseType(typeof(CreateLibraryUserDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ActionName(nameof(InitAsync))]
-        public async Task<IActionResult> InitAsync([FromForm] CreateCurrentLibraryUserDto model, CancellationToken token)
+        public async Task<IActionResult> InitAsync([FromBody] CreateCurrentLibraryUserDto model, CancellationToken token)
         {
             var perms = await _authorizationService.IsUserlessAsync(model.LibraryId, token);
             if (!perms)
@@ -50,13 +74,16 @@ namespace MyELib.Hosts.Api.Controllers
         /// <summary>
         /// Выдаёт права доступа к библиотеке пользователю.
         /// </summary>
+        /// <param name="model">Модель.</param>
+        /// <param name="token">Токен отмены операции.</param>
+        /// <returns></returns>
         [HttpPost("grant")]
         [ProducesResponseType(typeof(CreateLibraryUserDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ActionName(nameof(PostAsync))]
-        public async Task<IActionResult> PostAsync([FromForm] CreateLibraryUserDto model, CancellationToken token)
+        public async Task<IActionResult> PostAsync([FromBody] CreateLibraryUserDto model, CancellationToken token)
         {
             var perms = await _authorizationService.HasAccessAsync(model.LibraryId, AuthRolesDto.Owner, token);
             if (!perms)
@@ -69,23 +96,23 @@ namespace MyELib.Hosts.Api.Controllers
         /// <summary>
         /// Частично редактирует библиотеку-пользователя (меняет уровень доступа [роль]).
         /// </summary>
-        /// <param name="model"></param>
-        /// <param name="id"></param>
-        /// <param name="token"></param>
+        /// <param name="model">Модель</param>
+        /// <param name="id">Уникальный идентификатор.</param>
+        /// <param name="token">Токен отмены операции.</param>
         /// <returns></returns>
-        [HttpPut("{id:guid}")]
+        [HttpPatch("{id:guid}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> PatchAsync([FromForm] UpdateLibraryUserDto model, Guid id, CancellationToken token)
+        public async Task<IActionResult> PatchAsync([FromBody] UpdateLibraryUserDto model, Guid id, CancellationToken token)
         {
             var entityExists = await _libraryUserService.ExistsAsync(id, token);
             if (!entityExists)
                 return NotFound();
 
-            var perms = await _authorizationService.HasAccessAsync(id, AuthRolesDto.Owner, token);
+            var perms = await _authorizationService.HasAccessAsync(model.LibraryId, AuthRolesDto.Owner, token);
             if (!perms)
                 return Forbid();
 
@@ -96,10 +123,10 @@ namespace MyELib.Hosts.Api.Controllers
         /// <summary>
         /// Удаляет библиотеку-пользователя (забирает доступ у пользователя).
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="token"></param>
+        /// <param name="id">Уникальный идентификатор.</param>
+        /// <param name="token">Токен отмены операции.</param>
         /// <returns></returns>
-        [HttpDelete("revoke")]
+        [HttpDelete("{id:guid}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -112,8 +139,8 @@ namespace MyELib.Hosts.Api.Controllers
                 return NotFound();
 
             var userId = Guid.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-            var perms = await _authorizationService.HasAccessAsync(id, AuthRolesDto.Owner, token);
-            if (!perms && entity.UserId == userId)
+            var perms = await _authorizationService.HasAccessAsync(entity.LibraryId, AuthRolesDto.Owner, token);
+            if (!perms || entity.UserId == userId)
                 return Forbid();
 
             await _libraryUserService.DeleteAsync(id, token);

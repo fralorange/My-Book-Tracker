@@ -1,0 +1,38 @@
+<div class="mt-2 d-flex justify-content-center">
+  <h5 class="display-5">Библиотеки</h5>
+</div>
+
+<div class="mt-4 container">
+  <button class="btn btn-outline-primary" [routerLink]="['/library/add']">Создать библиотеку</button>
+</div>
+
+<div class="container mt-4">
+  <div class="row row-cols-3 g-4">
+    <div class="col" *ngFor="let library of libraries">
+      <div class="card">
+        <a [routerLink]="['/library', library.id]" class="text-decoration-none">
+          <div class="card-img-top" style="background-color: #ccc; height: 15vh;"></div>
+        </a>
+        <div class="card-body">
+          <h5 class="card-title">{{ library.name }}</h5>
+          <a class="btn btn-outline-primary" [routerLink]="['/library/edit', library.id]">Редактировать</a>
+          <a class="btn btn-outline-danger float-end" (click)="deleteLibrary(library.id)">Удалить</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<nav class="navbar fixed-bottom justify-content-center" aria-label="...">
+  <ul class="pagination">
+    <li class="page-item" [class.disabled]="currentPage === 1">
+      <a class="page-link" (click)="onPageChange(currentPage - 1)">Назад</a>
+    </li>
+    <li *ngFor="let page of pagesToShow" class="page-item">
+      <a class="page-link" [class.active]="page === currentPage" (click)="onPageChange(page)">{{ page }}</a>
+    </li>
+    <li class="page-item" [class.disabled]="currentPage === paginationData.pageCount || paginationData.pageCount === 0">
+      <a class="page-link" (click)="onPageChange(currentPage + 1)">Вперёд</a>
+    </li>
+  </ul>
+</nav>

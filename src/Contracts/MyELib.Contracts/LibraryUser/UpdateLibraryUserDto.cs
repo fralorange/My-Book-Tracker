@@ -9,6 +9,11 @@ namespace MyELib.Contracts.LibraryUser
     public class UpdateLibraryUserDto
     {
         /// <summary>
+        /// Уникальный идентификатор редактируемой библиотеки.
+        /// </summary>
+        [Required]
+        public Guid LibraryId { get; set; } 
+        /// <summary>
         /// Роль пользователя в библиотеке.
         /// </summary>
         [Required]

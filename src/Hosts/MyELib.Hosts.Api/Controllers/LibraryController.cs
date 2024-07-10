@@ -41,7 +41,6 @@ namespace MyELib.Hosts.Api.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetAsync([FromQuery] int pageNumber, [FromQuery] int pageSize, CancellationToken token)
         {
             var currentUsedId = Guid.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
@@ -49,6 +48,11 @@ namespace MyELib.Hosts.Api.Controllers
             // GetAllFiltered не работает с MapToExpression, переделывать дизайн на AutoMapper или писать собственный маппер Expression нет времени...
             var permissionCollection = collection.Where(lib => lib.LibraryUsers.Any(lu => lu.UserId == currentUsedId));
             var pagedCollection = permissionCollection.ToPagedList(pageNumber, pageSize);
+
+            Response.Headers.Append("X-Page-Count", pagedCollection.PageCount.ToString());
+            Response.Headers.Append("X-Current-Page", pagedCollection.PageNumber.ToString());
+            Response.Headers.Append("X-Page-Size", pagedCollection.PageSize.ToString());
+            Response.Headers.Append("X-Total-Count", pagedCollection.TotalItemCount.ToString());
 
             return Ok(pagedCollection);
         }
@@ -84,7 +88,7 @@ namespace MyELib.Hosts.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ActionName(nameof(PostAsync))]
-        public async Task<IActionResult> PostAsync([FromForm] CreateLibraryDto model, CancellationToken token)
+        public async Task<IActionResult> PostAsync([FromBody] CreateLibraryDto model, CancellationToken token)
         {
             var modelId = await _libraryService.CreateAsync(model, token);
             return Created(nameof(PostAsync), modelId);
@@ -102,7 +106,7 @@ namespace MyELib.Hosts.Api.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> PutAsync(Guid id, [FromForm] UpdateLibraryDto model, CancellationToken token)
+        public async Task<IActionResult> PutAsync(Guid id, [FromBody] UpdateLibraryDto model, CancellationToken token)
         {
             var exists = await _libraryService.ExistsAsync(id, token);
             if (!exists)

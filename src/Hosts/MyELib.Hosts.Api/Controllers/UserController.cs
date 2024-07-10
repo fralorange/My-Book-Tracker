@@ -49,7 +49,7 @@ namespace MyELib.Hosts.Api.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> PutAsync(Guid id, [FromForm] UpdateUserDto model, CancellationToken token)
+        public async Task<IActionResult> PutAsync(Guid id, [FromBody] UpdateUserDto model, CancellationToken token)
         {
             var currentUser = await _userService.GetCurrentUser(token);
             if (currentUser.Id != id)

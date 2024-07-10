@@ -50,6 +50,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Элементы решен
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyELib.Hosts.Migrator", "src\Hosts\MyELib.Hosts.Migrator\MyELib.Hosts.Migrator.csproj", "{905EB649-9D37-4AFA-BFB9-018BC70C7678}"
 EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "MyELib.Clients.Web", "src\Clients\MyELib.Clients.Web\MyELib.Clients.Web.esproj", "{09709DA7-5357-427A-8F37-C337043E7E1B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -100,6 +102,12 @@ Global
 		{905EB649-9D37-4AFA-BFB9-018BC70C7678}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{905EB649-9D37-4AFA-BFB9-018BC70C7678}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{905EB649-9D37-4AFA-BFB9-018BC70C7678}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09709DA7-5357-427A-8F37-C337043E7E1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09709DA7-5357-427A-8F37-C337043E7E1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09709DA7-5357-427A-8F37-C337043E7E1B}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{09709DA7-5357-427A-8F37-C337043E7E1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09709DA7-5357-427A-8F37-C337043E7E1B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09709DA7-5357-427A-8F37-C337043E7E1B}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -124,6 +132,7 @@ Global
 		{D3C5DA99-5C66-4539-9FC0-FA56A5DB1593} = {6FA11F08-45A2-443E-B3AB-943DADF71E71}
 		{E64B0352-EEED-448B-A03E-1B067FE06212} = {B6F8411C-E4BE-4DAA-8306-CFB02D9E47D0}
 		{905EB649-9D37-4AFA-BFB9-018BC70C7678} = {B6F8411C-E4BE-4DAA-8306-CFB02D9E47D0}
+		{09709DA7-5357-427A-8F37-C337043E7E1B} = {281DC46F-5501-49BE-913E-F2F2BDFD0663}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {364DC1EE-70A7-4A40-9948-08EB5BA00F0F}
