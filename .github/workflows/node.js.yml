@@ -26,6 +26,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+        cache-dependency-path: src/Clients/MyELib.Clients.Web/package-lock.json
     - name: Install dependencies and build
       run: |
         cd src/Clients/MyELib.Clients.Web
