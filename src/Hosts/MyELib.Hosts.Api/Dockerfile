@@ -27,7 +27,4 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-RUN mkdir -p /app/certificates
-COPY src/Hosts/MyELib.Hosts.Api/aspnetapp.pfx /app/certificates/
-
 ENTRYPOINT ["dotnet", "MyELib.Hosts.Api.dll"]
