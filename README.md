@@ -2,6 +2,8 @@
 
 Проект для дисциплины **Технология разработки SaaS приложений**.
 
+[![.NET](https://github.com/fralorange/My-Book-Tracker/actions/workflows/dotnet.yml/badge.svg)](https://github.com/fralorange/My-Book-Tracker/actions/workflows/dotnet.yml) [![Node.js CI](https://github.com/fralorange/My-Book-Tracker/actions/workflows/node.js.yml/badge.svg)](https://github.com/fralorange/My-Book-Tracker/actions/workflows/node.js.yml) [![Docker Compose CI](https://github.com/fralorange/My-Book-Tracker/actions/workflows/docker-compose.yml/badge.svg)](https://github.com/fralorange/My-Book-Tracker/actions/workflows/docker-compose.yml)
+
 ## Клонирование репозитория
 
 Чтобы начать работу над проектом, необходимо склонировать репозиторий git clone по следующей ссылке:
